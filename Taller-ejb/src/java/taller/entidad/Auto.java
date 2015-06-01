@@ -7,6 +7,7 @@ public class Auto {
     String modelo;
     Integer anho;
     String matricula;
+    String martin;
 
     public Auto() {
     }
