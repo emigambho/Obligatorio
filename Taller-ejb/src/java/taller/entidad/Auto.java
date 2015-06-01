@@ -4,6 +4,7 @@ import javax.persistence.ManyToOne;
 
 public class Auto {
     int asdas;
+    //Prueba
     String marca;
     String modelo;
     Integer anho;
