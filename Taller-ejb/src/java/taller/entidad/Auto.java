@@ -3,8 +3,9 @@ package taller.entidad;
 import javax.persistence.ManyToOne;
 
 public class Auto {
-    int asdas;
     //Prueba
+    int asdas;
+    String mmmm;
     String marca;
     String modelo;
     Integer anho;
