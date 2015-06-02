@@ -1,15 +1,15 @@
-package taller.sb;
+package SessionBean;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
-import taller.entidad.Auto;
-import taller.entidad.Cliente;
-import taller.entidad.Empleado;
-import taller.entidad.Servicio;
-import taller.entidad.Solicitud;
+import entidad.Auto;
+import entidad.Cliente;
+import entidad.Empleado;
+import entidad.Servicio;
+import entidad.Solicitud;
 
 @Singleton
 public class SistemaBean {

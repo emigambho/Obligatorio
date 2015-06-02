@@ -1,4 +1,4 @@
-package taller.entidad;
+package entidad;
 
 import java.util.ArrayList;
 import java.util.Date;

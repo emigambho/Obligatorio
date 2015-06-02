@@ -1,4 +1,4 @@
-package taller.mdb;
+package MessageDrivenBean;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
@@ -6,7 +6,7 @@ import javax.ejb.MessageDriven;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import taller.sb.ServicioBean;
+import SessionBean.ServicioBean;
 
 @MessageDriven(mappedName = "jms/ServicioQueue", activationConfig = {
     @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")

@@ -1,4 +1,4 @@
-package taller.sb;
+package SessionBean;
 
 import com.sun.xml.ws.security.impl.policy.Constants;
 import java.util.List;
@@ -13,8 +13,8 @@ import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.Session;
-import taller.entidad.Servicio;
-import taller.entidad.Solicitud;
+import entidad.Servicio;
+import entidad.Solicitud;
 
 @Stateless
 public class ServicioBean {

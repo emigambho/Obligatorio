@@ -1,5 +1,6 @@
 package taller.rest;
 
+import SessionBean.ServicioBean;
 import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -14,7 +15,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-import taller.sb.ServicioBean;
+
 
 @ManagedBean
 @Path("servicios")

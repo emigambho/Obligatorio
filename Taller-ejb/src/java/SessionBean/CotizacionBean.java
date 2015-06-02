@@ -1,4 +1,4 @@
-package taller.sb;
+package SessionBean;
 
 import javax.ejb.Singleton;
 

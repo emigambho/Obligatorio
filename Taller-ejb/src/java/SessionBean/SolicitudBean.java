@@ -1,11 +1,13 @@
-package taller.sb;
+package SessionBean;
 
+import entidad.Solicitud;
+import entidad.Empleado;
+import entidad.Auto;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import taller.entidad.*;
 
 @Stateless
 public class SolicitudBean {

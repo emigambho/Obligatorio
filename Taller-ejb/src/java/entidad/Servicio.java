@@ -1,4 +1,4 @@
-package taller.entidad;
+package entidad;
 
 public class Servicio {
     

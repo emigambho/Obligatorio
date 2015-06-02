@@ -1,4 +1,4 @@
-package taller.entidad;
+package entidad;
 
 import javax.persistence.ManyToOne;
 

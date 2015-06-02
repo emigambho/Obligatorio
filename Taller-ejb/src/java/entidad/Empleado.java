@@ -1,4 +1,4 @@
-package taller.entidad;
+package entidad;
 
 import java.io.Serializable;
 import java.util.Date;
