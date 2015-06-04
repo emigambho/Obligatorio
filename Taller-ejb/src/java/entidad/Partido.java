@@ -1,42 +1,96 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entidad;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 public class Partido implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @NotBlank
+    @NotNull
     private Equipo equipoA;
+    @NotBlank
+    @NotNull
     private Equipo equipoB;
+    @NotBlank
+    @NotNull
     private Integer golesA;
+    @NotBlank
+    @NotNull
     private Integer golesB;
-
+    @NotBlank
+    @NotNull
+    private Date Fecha;
+    @NotBlank
+    @NotNull
+    private Integer HoraI;
+    @NotBlank
+    @NotNull
+    private Integer Minutos;
+    @NotBlank
+    @NotNull
+    private Integer HoraF;
+   
+    
+    
     public Partido() {
     }
 
-    public Partido(Long id, Equipo equipoA, Equipo equipoB, Integer golesA, Integer golesB) {
+    public Partido(Long id, Equipo equipoA, Equipo equipoB,Date Fecha, Integer HoraI, Integer HoraF) {
         this.id = id;
         this.equipoA = equipoA;
         this.equipoB = equipoB;
-        this.golesA = golesA;
-        this.golesB = golesB;
+        this.golesA = 0;
+        this.golesB = 0;
+        this.Fecha = Fecha;
+        this.HoraI = HoraI;
+        this.Minutos = 0;
+        this.HoraF = HoraF;
     }
-          
+
+
+
+    public Date getFecha() {
+        return Fecha;
+    }
+
+    public void setFecha(Date Fecha) {
+        this.Fecha = Fecha;
+    }
+
+    public Integer getHoraI() {
+        return HoraI;
+    }
+
+    public void setHoraI(Integer HoraI) {
+        this.HoraI = HoraI;
+    }
+
+    public Integer getMinutos() {
+        return Minutos;
+    }
+
+    public void setMinutos(Integer Minutos) {
+        this.Minutos = Minutos;
+    }
+
+    public Integer getHoraF() {
+        return HoraF;
+    }
+
+    public void setHoraF(Integer HoraF) {
+        this.HoraF = HoraF;
+    }        
+ 
     public Long getId() {
         return id;
     }
