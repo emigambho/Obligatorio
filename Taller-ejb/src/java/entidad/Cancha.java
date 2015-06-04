@@ -1,27 +1,66 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package entidad;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 public class Cancha implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    
+    @NotNull
+    @NotBlank
+    private String tipo;
+    
+    @NotNull
+    @NotBlank
+    private Double tamanio;
+    
+    @OneToMany(cascade = CascadeType.ALL) 
+    private List<Partido> partidos;
+    
+    public Cancha(){
+    
+    }
 
+    public Cancha(Long id, String tipo, Double tamanio, List<Partido> partidos) {
+        this.id = id;
+        this.tipo = tipo;
+        this.tamanio = tamanio;
+        this.partidos = partidos;
+    }
+    
+    
+
+    public void setTamanio(Double tamanio) {
+        this.tamanio = tamanio;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public Double getTamanio() {
+        return tamanio;
+    }
+    
     public Long getId() {
         return id;
     }
@@ -29,6 +68,16 @@ public class Cancha implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public List<Partido> getPartidos() {
+        return partidos;
+    }
+
+    public void setPartidos(List<Partido> partidos) {
+        this.partidos = partidos;
+    }
+    
+    
 
     @Override
     public int hashCode() {
