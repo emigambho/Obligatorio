@@ -29,15 +29,19 @@ public class Cancha implements Serializable {
     @OneToMany(cascade = CascadeType.ALL) 
     private List<Partido> partidos;
     
+    @NotNull
+    private Boolean habilitado;
+    
     public Cancha(){
     
     }
 
-    public Cancha(Long id, String tipo, Double tamanio, List<Partido> partidos) {
+    public Cancha(Long id, String tipo, Double tamanio, List<Partido> partidos,Boolean habilitado) {
         this.id = id;
         this.tipo = tipo;
         this.tamanio = tamanio;
         this.partidos = partidos;
+        this.habilitado = habilitado;
     }
     
     
@@ -72,6 +76,14 @@ public class Cancha implements Serializable {
 
     public void setPartidos(List<Partido> partidos) {
         this.partidos = partidos;
+    }
+
+    public Boolean getHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(Boolean habilitado) {
+        this.habilitado = habilitado;
     }
     
     
