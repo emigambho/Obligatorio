@@ -25,17 +25,7 @@ public class ServicioBean {
     @Resource(lookup = "jms/ServicioQueueFactory")
     private QueueConnectionFactory connectionFactory;
     
-    @EJB
-    private SistemaBean sistemaBean;
-    
-    public Solicitud agregarServicio(Long idSolicitud, String servicio) {
-        Solicitud solicitud = sistemaBean.buscarSolicitudPorId(idSolicitud);
-        if (solicitud != null) {
-            solicitud.addToServicios(new Servicio(servicio, "PENDIENTE"));
-        }
-        return solicitud;
-    }
-    
+     
     public void registrarCambioEstado(Long idSolicitud, String servicio, String estado) {
         
         try {
