@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package entidad;
 
 import java.io.Serializable;
@@ -22,10 +18,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import org.hibernate.validator.constraints.NotBlank;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 public class Jugador implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -36,10 +28,14 @@ public class Jugador implements Serializable {
     @NotNull
     @NotBlank
     private String nombre;
-    
+  
     @Past
     @Temporal(TemporalType.DATE)
     private Date FechaNacimiento;
+    
+    @NotNull
+    @NotBlank
+    private Integer telefono;
     
     @ManyToMany(cascade = CascadeType.ALL) 
     @JoinTable(name="jugador_equipo", 
@@ -52,8 +48,9 @@ public class Jugador implements Serializable {
     public Jugador() {
     }
 
-    public Jugador(Long id, String nombre, Date FechaNacimiento, List<Equipo> equipos) {
+    public Jugador(Long id, String nombre, Date FechaNacimiento, List<Equipo> equipos, Integer telefono) {
         this.id = id;
+        this.telefono = telefono;
         this.nombre = nombre;
         this.FechaNacimiento = FechaNacimiento;
         this.equipos = equipos;
@@ -62,6 +59,7 @@ public class Jugador implements Serializable {
     public Long getId() {
         return id;
     }
+    
 
     public void setId(Long id) {
         this.id = id;
@@ -98,6 +96,15 @@ public class Jugador implements Serializable {
         return hash;
     }
 
+    public Integer getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(Integer telefono) {
+        this.telefono = telefono;
+    }
+    
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set

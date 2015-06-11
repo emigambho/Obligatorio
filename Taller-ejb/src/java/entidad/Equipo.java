@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package entidad;
 
 import java.io.Serializable;
@@ -15,11 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
-/**
- *
- * @author Usuario
- */
 @Entity
 public class Equipo implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -27,6 +21,28 @@ public class Equipo implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
+    @NotNull
+    @NotBlank
+    private Integer clasificacion;
+    
+    @NotNull
+    @NotBlank
+    private String color;
+    
+    @NotNull
+    @NotBlank
+    private String nombre;
+
+
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="equipo_partido", 
+            joinColumns = @JoinColumn(name="equipo_id", 
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="partido_id", 
+                    referencedColumnName = "id"))
+    private List<Partido> partidos;
+      
     @ManyToMany(cascade = CascadeType.ALL) 
     @JoinTable(name="jugador_equipo", 
             joinColumns = @JoinColumn(name="equipo_id", 
@@ -35,15 +51,18 @@ public class Equipo implements Serializable {
                     referencedColumnName = "id"))
     private List<Jugador> jugadores;
     
-    private Integer clasificacion;
+   
 
     public Equipo() {
     }
 
-    public Equipo(Long id, List<Jugador> jugadores, Integer clasificacion) {
+    public Equipo(Long id, List<Jugador> jugadores, Integer clasificacion, String color, List<Partido> partidos, String nombre) {
         this.id = id;
+        this.color=color;
+        this.partidos=partidos;
         this.jugadores = jugadores;
         this.clasificacion = clasificacion;
+        this.nombre = nombre;
     }
     
     public Long getId() {
@@ -53,7 +72,24 @@ public class Equipo implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
+    
+    public String getColor() {
+        return color;
+    }
+    
+    public void setColor(String color) {
+        this.color = color;
+    }
 
+    public void setPartidos(List<Partido> partidos) {
+        this.partidos = partidos;
+    }
+
+    public List<Partido> getPartidos() {
+        return partidos;
+    }
+
+        
     public List<Jugador> getJugadores() {
         return jugadores;
     }
@@ -69,6 +105,16 @@ public class Equipo implements Serializable {
     public void setClasificacion(Integer clasificacion) {
         this.clasificacion = clasificacion;
     }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    
     
     @Override
     public int hashCode() {
