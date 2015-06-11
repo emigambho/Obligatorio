@@ -19,24 +19,12 @@ import javax.validation.constraints.Past;
 import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
-public class Jugador implements Serializable {
+public class Jugador extends Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @NotNull
-    @NotBlank
-    private String nombre;
-  
-    @Past
-    @Temporal(TemporalType.DATE)
-    private Date FechaNacimiento;
-    
-    @NotNull
-    @NotBlank
-    private Integer telefono;
-    
+          
     @ManyToMany(cascade = CascadeType.ALL) 
     @JoinTable(name="jugador_equipo", 
             joinColumns = @JoinColumn(name="jugador_id", 
@@ -44,16 +32,20 @@ public class Jugador implements Serializable {
             inverseJoinColumns = @JoinColumn(name="equipo_id", 
                     referencedColumnName = "id"))
     private List<Equipo> equipos;
-
-    public Jugador() {
+    
+    @NotNull
+    private Integer puntuacion;
+    
+    public Jugador(){
+    
     }
 
-    public Jugador(Long id, String nombre, Date FechaNacimiento, List<Equipo> equipos, Integer telefono) {
+    public Jugador(Long id, String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono,Integer puntuacion,
+            String email,String contrasenia,String direccion) {
+        super(telefono,nombre,email,contrasenia,direccion,fechaNacimiento);
         this.id = id;
-        this.telefono = telefono;
-        this.nombre = nombre;
-        this.FechaNacimiento = FechaNacimiento;
         this.equipos = equipos;
+        this.puntuacion = puntuacion;
     }
     
     public Long getId() {
@@ -65,22 +57,6 @@ public class Jugador implements Serializable {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public Date getFechaNacimiento() {
-        return FechaNacimiento;
-    }
-
-    public void setFechaNacimiento(Date FechaNacimiento) {
-        this.FechaNacimiento = FechaNacimiento;
-    }
-
     public List<Equipo> getEquipos() {
         return equipos;
     }
@@ -88,6 +64,15 @@ public class Jugador implements Serializable {
     public void setEquipos(List<Equipo> equipos) {
         this.equipos = equipos;
     }
+
+    public Integer getPuntuacion() {
+        return puntuacion;
+    }
+
+    public void setPuntuacion(Integer puntuacion) {
+        this.puntuacion = puntuacion;
+    }
+        
     
     @Override
     public int hashCode() {
@@ -96,14 +81,6 @@ public class Jugador implements Serializable {
         return hash;
     }
 
-    public Integer getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(Integer telefono) {
-        this.telefono = telefono;
-    }
-    
     
     @Override
     public boolean equals(Object object) {
