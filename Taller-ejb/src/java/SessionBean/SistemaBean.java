@@ -6,7 +6,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import entidad.Auto;
-import entidad.Cliente;
+import entidad.Jugador;
 import entidad.Empleado;
 import entidad.Servicio;
 import entidad.Solicitud;
@@ -14,18 +14,18 @@ import entidad.Solicitud;
 @Singleton
 public class SistemaBean {
     
-    List<Cliente> listaClientes;
+    List<Jugador> listaClientes;
     List<Empleado> listaEmpleados;
     List<Auto> listaAutos;
     List<Solicitud> listaSolicitudes;
     
     @PostConstruct
     void setup() {
-        listaClientes = new ArrayList<Cliente>();
+        listaClientes = new ArrayList<Jugador>();
         listaEmpleados = new ArrayList<Empleado>();
         listaAutos = new ArrayList<Auto>();
         listaSolicitudes = new ArrayList<Solicitud>();
-        Cliente c = new Cliente(1L, "Jose");
+        Jugador c = new Jugador(1L, "Jose");
         Auto a = new Auto("Fiat", "Uno", 1998, "SAI4068");
         c.addToAutos(a);
         Empleado e = new Empleado(1, "Carlos");
@@ -34,7 +34,7 @@ public class SistemaBean {
         s.addToServicios(new Servicio("BALANCEO", "PENDIENTE"));
         this.listaAutos.add(a);
         this.listaClientes.add(c);
-        this.listaClientes.add(new Cliente(2L, "Maria"));
+        this.listaClientes.add(new Jugador(2L, "Maria"));
         this.listaEmpleados.add(e);
         this.listaEmpleados.add(new Empleado(2, "Daniel"));
         this.listaSolicitudes.add(s);
@@ -92,11 +92,11 @@ public class SistemaBean {
         return this.listaClientes.size() + 1L;
     }
 
-    public List<Cliente> listarClientes() {
+    public List<Jugador> listarClientes() {
         return this.listaClientes;
     }
 
-    public Cliente guardarCliente(Cliente cliente) {
+    public Jugador guardarCliente(Jugador cliente) {
         cliente.setId(nextIdCliente());
         this.listaClientes.add(cliente);
         return cliente;

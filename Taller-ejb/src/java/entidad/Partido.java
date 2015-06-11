@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
+import partido.util.EstadoPartido;
 
 @Entity
 public class Partido implements Serializable {
@@ -29,68 +30,35 @@ public class Partido implements Serializable {
     private Integer golesB;
     @NotBlank
     @NotNull
-    private Date Fecha;
+    private Date fechaF;
     @NotBlank
     @NotNull
-    private Integer HoraI;
+    private Date fechaI;
     @NotBlank
     @NotNull
-    private Integer Minutos;
+    private Integer minutos;
     @NotBlank
     @NotNull
-    private Integer HoraF;
-   
+    private EstadoPartido estado;
+      
     
     
     public Partido() {
     }
 
-    public Partido(Long id, Equipo equipoA, Equipo equipoB,Date Fecha, Integer HoraI, Integer HoraF) {
+    public Partido(Long id, Equipo equipoA, Equipo equipoB, Date fechaF, Date fechaI, EstadoPartido estado) {
         this.id = id;
         this.equipoA = equipoA;
         this.equipoB = equipoB;
         this.golesA = 0;
         this.golesB = 0;
-        this.Fecha = Fecha;
-        this.HoraI = HoraI;
-        this.Minutos = 0;
-        this.HoraF = HoraF;
+        this.fechaF = fechaF;
+        this.fechaI = fechaI;
+        this.estado = estado;
     }
+    
+    
 
-
-
-    public Date getFecha() {
-        return Fecha;
-    }
-
-    public void setFecha(Date Fecha) {
-        this.Fecha = Fecha;
-    }
-
-    public Integer getHoraI() {
-        return HoraI;
-    }
-
-    public void setHoraI(Integer HoraI) {
-        this.HoraI = HoraI;
-    }
-
-    public Integer getMinutos() {
-        return Minutos;
-    }
-
-    public void setMinutos(Integer Minutos) {
-        this.Minutos = Minutos;
-    }
-
-    public Integer getHoraF() {
-        return HoraF;
-    }
-
-    public void setHoraF(Integer HoraF) {
-        this.HoraF = HoraF;
-    }        
- 
     public Long getId() {
         return id;
     }
@@ -130,22 +98,62 @@ public class Partido implements Serializable {
     public void setGolesB(Integer golesB) {
         this.golesB = golesB;
     }
+
+    public Date getFechaF() {
+        return fechaF;
+    }
+
+    public void setFechaF(Date fechaF) {
+        this.fechaF = fechaF;
+    }
+
+    public Date getFechaI() {
+        return fechaI;
+    }
+
+    public void setFechaI(Date fechaI) {
+        this.fechaI = fechaI;
+    }
+
+    public Integer getMinutos() {
+        return minutos;
+    }
+
+    public void setMinutos(Integer minutos) {
+        this.minutos = minutos;
+    }
+    
+    public EstadoPartido getEstado(){
+        return estado;
+    }
+    
+    public void setEsadoParido(EstadoPartido estado){
+        this.estado = estado;
+    }
     
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        int hash = 7;
+        hash = 41 * hash + (this.id != null ? this.id.hashCode() : 0);
         return hash;
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Partido)) {
+    public boolean equals(Object obj) {
+        if (obj == null) {
             return false;
         }
-        Partido other = (Partido) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Partido other = (Partido) obj;
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
+        if (this.equipoA != other.equipoA && (this.equipoA == null || !this.equipoA.equals(other.equipoA))) {
+            return false;
+        }
+        if (this.equipoB != other.equipoB && (this.equipoB == null || !this.equipoB.equals(other.equipoB))) {
             return false;
         }
         return true;
@@ -153,7 +161,11 @@ public class Partido implements Serializable {
 
     @Override
     public String toString() {
-        return "entidad.Partido[ id=" + id + " ]";
+        return "Partido{" + "equipoA=" + equipoA + ", equipoB=" + equipoB + ", golesA=" + golesA + ", golesB=" + golesB + '}';
     }
+    
+    
+    
+  
     
 }

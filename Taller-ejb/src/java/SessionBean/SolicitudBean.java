@@ -1,8 +1,6 @@
 package SessionBean;
 
-import entidad.Solicitud;
-import entidad.Empleado;
-import entidad.Auto;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

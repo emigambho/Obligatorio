@@ -5,10 +5,10 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import entidad.Cliente;
+import entidad.Jugador;
 
 @Stateless
-public class ClienteBean {
+public class EquipoBean {
     
     @PersistenceContext
     EntityManager em;
@@ -16,16 +16,16 @@ public class ClienteBean {
     @EJB
     private SistemaBean sistemaBean;
     
-    public Cliente crearCliente(Cliente cliente) {
+    public Jugador crearCliente(Jugador cliente) {
         em.persist(cliente);
         return cliente;
     }
     
-    public List<Cliente> listarClientes() {
+    public List<Jugador> listarClientes() {
         return em.createQuery("select c from Cliente c").getResultList();
     }
     
-    public List<Cliente> buscarClientePorNombre(String nombre) {
+    public List<Jugador> buscarClientePorNombre(String nombre) {
         return em.createQuery("select c from Cliente c where nombre = :n")
                 .setParameter("n", nombre)
                 .getResultList();
