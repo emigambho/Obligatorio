@@ -17,8 +17,8 @@ public class Administrador extends Usuario implements Serializable{
     
     public Administrador(){}
 
-    public Administrador(Long id, List<Local> locales, Integer telefono, String nombre, String email, String contrasenia, String direccion, Date fechaNacimiento) {
-        super(id,telefono, nombre, email, contrasenia, direccion, fechaNacimiento);
+    public Administrador(List<Local> locales, Integer telefono, String nombre, String email, String contrasenia, String direccion, Date fechaNacimiento) {
+        super(telefono, nombre, email, contrasenia, direccion, fechaNacimiento);
         this.locales = locales;
     }
 

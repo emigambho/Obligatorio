@@ -9,14 +9,11 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
-import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 public class Jugador extends Usuario implements Serializable {
+    
     @ManyToMany(cascade = CascadeType.ALL) 
     @JoinTable(name="jugador_equipo", 
             joinColumns = @JoinColumn(name="jugador_id", 
@@ -32,9 +29,9 @@ public class Jugador extends Usuario implements Serializable {
     
     }
 
-    public Jugador(Long id, String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono,Integer puntuacion,
+    public Jugador(String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono,Integer puntuacion,
             String email,String contrasenia,String direccion) {
-        super(id,telefono,nombre,email,contrasenia,direccion,fechaNacimiento);
+        super(telefono,nombre,email,contrasenia,direccion,fechaNacimiento);
         this.equipos = equipos;
         this.puntuacion = puntuacion;
     }

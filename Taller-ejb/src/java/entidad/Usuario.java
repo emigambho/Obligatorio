@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import org.hibernate.validator.constraints.NotBlank;
@@ -44,8 +43,7 @@ public class Usuario{
     
     public Usuario(){}
 
-    public Usuario(Long Id,Integer telefono, String nombre, String email, String contrasenia, String direccion,  Date fechaNacimiento) {
-        this.id = id;
+    public Usuario(Integer telefono, String nombre, String email, String contrasenia, String direccion,  Date fechaNacimiento) {
         this.telefono = telefono;
         this.nombre = nombre;
         this.email = email;

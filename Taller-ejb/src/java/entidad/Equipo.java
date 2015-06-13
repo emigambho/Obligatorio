@@ -56,8 +56,7 @@ public class Equipo implements Serializable {
     public Equipo() {
     }
 
-    public Equipo(Long id, List<Jugador> jugadores, Integer clasificacion, String color, List<Partido> partidos, String nombre) {
-        this.id = id;
+    public Equipo(List<Jugador> jugadores, Integer clasificacion, String color, List<Partido> partidos, String nombre) {
         this.color=color;
         this.partidos=partidos;
         this.jugadores = jugadores;
