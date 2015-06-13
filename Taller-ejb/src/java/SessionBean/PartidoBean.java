@@ -21,10 +21,10 @@ import partido.util.EstadoPartido;
 
 @Stateless
 public class PartidoBean {
-     
+
     @Resource(lookup = "jms/PartidoQueue")
     private Queue colaDePartidos;
-    
+
     @Resource(lookup = "jms/PartidoQueueFactory")
     private QueueConnectionFactory connectionFactory;
 
@@ -57,55 +57,81 @@ public class PartidoBean {
         equipos.add(partido.getEquipoA());
         return equipos;
     }
-    
-    public void terminarPartido(Long idPartido, Integer golesA, Integer golesB){
+
+    public void terminarPartido(Long idPartido, Integer golesA, Integer golesB) {
         Partido partido = BuscarPartido(idPartido);
         partido.setGolesA(golesA);
         partido.setGolesB(golesB);
-        ActualizarCalificaciones(partido);
+        ActualizarCalsificaciones(partido);
         partido.setEsadoParido(EstadoPartido.TERMINADO);
         em.persist(partido);
     }
 
-    public void ActualizarCalificaciones(Partido partido) {
+    public void ActualizarCalsificacionesJugadoresEmpate(Equipo equipo) {
+        for (Jugador jugador : equipo.getJugadores()) {
+            Integer puntuacion = jugador.getPuntuacion();
+            if (puntuacion < 10) {
+                puntuacion++;
+            }
+            jugador.setPuntuacion(puntuacion);
+        }
+    }
+
+    public void ActualizarCalsificacionesEquiposEmpate(Integer puntuacionA, Integer puntuacionB) {
+        if (puntuacionA < 10) {
+            puntuacionA++;
+        }
+        if (puntuacionB < 10) {
+            puntuacionB++;
+        }
+    }
+
+    public void ActualizarCalsificacionesJugadoresGanaUnEquipo(Equipo equipo) {
+        for (Jugador jugador : equipo.getJugadores()) {
+            Integer puntuacion = jugador.getPuntuacion();
+            if (puntuacion < 9) {
+                puntuacion = puntuacion + 2;
+            } else if (puntuacion == 9) {
+                puntuacion++;
+            }
+            jugador.setPuntuacion(puntuacion);
+        }
+    }
+
+    public void ActualizarCalsificacionesEquiposGanaUnEquipo(Integer puntuacionA, Integer puntuacionB) {
+        if (puntuacionA < 9) {
+            puntuacionA = puntuacionA + 2;
+        } else if (puntuacionA == 9) {
+            puntuacionA++;
+        }
+        if (puntuacionB > 0) {
+            puntuacionB--;
+        }
+    }
+
+    public void ActualizarCalsificaciones(Partido partido) {
         Equipo equipoA = partido.getEquipoA();
         Equipo equipoB = partido.getEquipoB();
         Integer clasificacionEquipoA = equipoA.getClasificacion();
         Integer clasificacionEquipoB = equipoB.getClasificacion();
         Integer golesEquipoA = partido.getGolesA();
         Integer golesEquipoB = partido.getGolesB();
-       //SI EMPATAN 1 PUNTO PARA CADA UNO, AL MENOS QUE YA TENGAN 10 PUNTOS LOS EQUIPOS
+        //SI EMPATAN 1 PUNTO PARA CADA UNO, AL MENOS QUE YA TENGAN 10 PUNTOS LOS EQUIPOS
         if (golesEquipoA.compareTo(golesEquipoB) == 0) {
-            if (clasificacionEquipoA < 10) {
-                clasificacionEquipoA++;
-            }
-            if (clasificacionEquipoB < 10) {
-                clasificacionEquipoB++;
-            }
+            ActualizarCalsificacionesEquiposEmpate(clasificacionEquipoA, clasificacionEquipoB);
+            ActualizarCalsificacionesJugadoresEmpate(equipoA);
+            ActualizarCalsificacionesJugadoresEmpate(equipoB);
         // SI GANA EL PARTIDO "A", SON DOS PUNTOS PARA "A" Y -1 PARA "B", AL MENOS QUE "A" TENGA 10(NO SUMA) Y SI TIENE 9 PUNTOS 
-        //SUMA SOLO 1 Y "B" SI TIENE PUNTAJE 0 NO RESTA, SI EL PARTIDO O GANA "B" IDEM CON LOS PUNTAJES CAMBIADOS
-        } else if (golesEquipoA.compareTo(golesEquipoB)>0) {
-            if(clasificacionEquipoA<9){
-                clasificacionEquipoA=clasificacionEquipoA+2;
-            }else if(clasificacionEquipoA==9){
-                clasificacionEquipoA++;
-            }
-            if(clasificacionEquipoB>0){
-                clasificacionEquipoB--;
-            }
-        }else{
-               if(clasificacionEquipoB<9){
-                clasificacionEquipoB=clasificacionEquipoB+2;
-            }else if(clasificacionEquipoB==9){
-                clasificacionEquipoB++;
-            }
-            if(clasificacionEquipoA>0){
-                clasificacionEquipoA--;
-            }
+            //SUMA SOLO 1 Y "B" SI TIENE PUNTAJE 0 NO RESTA, SI EL PARTIDO O GANA "B" IDEM CON LOS PUNTAJES CAMBIADOS
+        } else if (golesEquipoA.compareTo(golesEquipoB) > 0) {
+            ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoA, clasificacionEquipoB);
+            ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoA);
+        } else {
+            ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoB, clasificacionEquipoA);
+            ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoB);
         }
         equipoA.setClasificacion(clasificacionEquipoA);
         equipoB.setClasificacion(clasificacionEquipoB);
-        //FALTARÍA GUARDAR LOS RESULTADOS EN LA BASE
     }
 
     public void registrarJugadorAPartido(Date fecha, Jugador jugador) {
@@ -121,10 +147,10 @@ public class PartidoBean {
             session.close();
             connection.close();
         } catch (Exception ex) {
-            
+
         }
     }
-    
+
     public void registrarEquipoAPartido(Date fecha, Equipo equipo) {
         //TODO: Realizar bien las configuraciones
         try {
@@ -138,12 +164,12 @@ public class PartidoBean {
             session.close();
             connection.close();
         } catch (Exception ex) {
-            
+
         }
     }
 
     public void registrarJugador(Date fecha, Jugador jugador) {
-        
+
     }
 
     public void registrarEquipo(Date fecha, Equipo equipo) {
