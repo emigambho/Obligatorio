@@ -17,6 +17,7 @@ import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import partido.util.EstadoPartido;
 
 @Stateless
 public class PartidoBean {
@@ -56,9 +57,17 @@ public class PartidoBean {
         equipos.add(partido.getEquipoA());
         return equipos;
     }
-
-    public void ActualizarCalificaciones(Long idPartido) {
+    
+    public void terminarPartido(Long idPartido, Integer golesA, Integer golesB){
         Partido partido = BuscarPartido(idPartido);
+        partido.setGolesA(golesA);
+        partido.setGolesB(golesB);
+        ActualizarCalificaciones(partido);
+        partido.setEsadoParido(EstadoPartido.TERMINADO);
+        em.persist(partido);
+    }
+
+    public void ActualizarCalificaciones(Partido partido) {
         Equipo equipoA = partido.getEquipoA();
         Equipo equipoB = partido.getEquipoB();
         Integer clasificacionEquipoA = equipoA.getClasificacion();
