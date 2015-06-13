@@ -1,31 +1,57 @@
 package SessionBean;
 
+import entidad.Administrador;
+import entidad.Equipo;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import entidad.Jugador;
+import entidad.Partido;
+import java.util.Date;
 
 @Stateless
 public class EquipoBean {
-    
+
     @PersistenceContext
     EntityManager em;
-    
-    public Jugador crearCliente(Jugador cliente) {
-        em.persist(cliente);
-        return cliente;
+
+    public Equipo CrearEquipo(Long id, List<Jugador> jugadores, Integer clasificacion, String color, List<Partido> partidos, String nombre) {
+        Equipo equipo = new Equipo(id, jugadores, clasificacion, color, partidos, nombre);
+        em.persist(equipo);
+        return equipo;
     }
-    
-    public List<Jugador> listarClientes() {
-        return em.createQuery("select c from Cliente c").getResultList();
+
+    public Equipo BuscarEquipo(Long id) {
+        return (Equipo) em.createQuery("select e from Equipo e where id = :id")
+                .setParameter("id", id).getSingleResult();
     }
-    
-    public List<Jugador> buscarClientePorNombre(String nombre) {
-        return em.createQuery("select c from Cliente c where nombre = :n")
-                .setParameter("n", nombre)
-                .getResultList();
+
+    public Jugador BuscarJugador(Long id) {
+        return (Jugador) em.createQuery("select j from Jugador j where id = :id")
+                .setParameter("id", id).getSingleResult();
+    }
+
+    public Boolean IncribirJugadorEquipo(Long idEquipo, Long idJugador) {
+        Jugador jugador = BuscarJugador(idJugador);
+        Equipo equipo = BuscarEquipo(idEquipo);
+        if (equipo.getJugadores().size() < 5 || !equipo.getJugadores().contains(jugador)) {
+            equipo.getJugadores().add(jugador);
+            return true;
+        }
+        return false;
+        //faltaría guardarlo en la base
+    }
+    public boolean BorrarJugadorEquipo(Long idEquipo, Long idJugador){
+        Jugador jugador = BuscarJugador(idJugador);
+        Equipo equipo = BuscarEquipo(idEquipo);
+        if (equipo.getJugadores().contains(jugador)) {
+            equipo.getJugadores().remove(jugador);
+            return true;
+        }
+        return false;
+        //faltaría guardarlo en la base
     }
 
 }

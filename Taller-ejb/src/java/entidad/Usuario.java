@@ -1,6 +1,10 @@
 package entidad;
 
 import java.util.Date;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
@@ -8,7 +12,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import org.hibernate.validator.constraints.NotBlank;
 
+@MappedSuperclass
 public class Usuario{
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     
     @NotNull
     private Integer telefono;
@@ -35,13 +44,22 @@ public class Usuario{
     
     public Usuario(){}
 
-    public Usuario(Integer telefono, String nombre, String email, String contrasenia, String direccion,  Date fechaNacimiento) {
+    public Usuario(Long Id,Integer telefono, String nombre, String email, String contrasenia, String direccion,  Date fechaNacimiento) {
+        this.id = id;
         this.telefono = telefono;
         this.nombre = nombre;
         this.email = email;
         this.contrasenia = contrasenia;
         this.direccion = direccion;
         this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
         
     public Integer getTelefono() {
