@@ -1,4 +1,4 @@
-package taller.rest;
+package serviciosRest;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
@@ -14,9 +14,7 @@ public class ApplicationConfig extends Application {
     }
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(taller.rest.ClienteResource.class);
-        resources.add(taller.rest.ServicioResource.class);
-        resources.add(taller.rest.SolicitudResource.class);
+        resources.add(serviciosRest.PartidoResource.class);
     }
     
 }
