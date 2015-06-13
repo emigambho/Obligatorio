@@ -8,18 +8,6 @@
             <web-module-libraries/>
             <web-module-additional-libraries>
                 <library>
-                    <file>${reference.Taller-war.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
-                    <file>${reference.Taller-ejb.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
-                    <file>${reference.Taller-ejb.dist-ear}</file>
-                    <path-in-war>/</path-in-war>
-                </library>
-                <library>
                     <file>${reference.Dominio-ejb.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
@@ -40,22 +28,6 @@
             </reference>
             <reference>
                 <foreign-project>Servicios</foreign-project>
-                <artifact-type>j2ee_ear_archive</artifact-type>
-                <script>build.xml</script>
-                <target>dist-ear</target>
-                <clean-target>clean-ear</clean-target>
-                <id>dist-ear</id>
-            </reference>
-            <reference>
-                <foreign-project>Taller-ejb</foreign-project>
-                <artifact-type>j2ee_ear_archive</artifact-type>
-                <script>build.xml</script>
-                <target>dist-ear</target>
-                <clean-target>clean-ear</clean-target>
-                <id>dist-ear</id>
-            </reference>
-            <reference>
-                <foreign-project>Taller-war</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>
