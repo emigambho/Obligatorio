@@ -17,19 +17,19 @@ public class EquipoBean {
     @PersistenceContext
     EntityManager em;
 
-    public Equipo CrearEquipo(Long id, List<Jugador> jugadores, Integer clasificacion, String color, List<Partido> partidos, String nombre) {
-        Equipo equipo = new Equipo(id, jugadores, clasificacion, color, partidos, nombre);
+    public Equipo CrearEquipo(List<Jugador> jugadores, Integer clasificacion, String color, List<Partido> partidos, String nombre) {
+        Equipo equipo = new Equipo(jugadores, clasificacion, color, partidos, nombre);
         em.persist(equipo);
         return equipo;
     }
 
     public Equipo BuscarEquipo(Long id) {
-        return (Equipo) em.createQuery("select e from Equipo e where id = :id")
+        return (Equipo) em.createQuery("select e from Equipo e where e.id = :id")
                 .setParameter("id", id).getSingleResult();
     }
 
     public Jugador BuscarJugador(Long id) {
-        return (Jugador) em.createQuery("select j from Jugador j where id = :id")
+        return (Jugador) em.createQuery("select j from Jugador j where j.id = :id")
                 .setParameter("id", id).getSingleResult();
     }
 
