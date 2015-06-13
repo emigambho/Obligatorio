@@ -5,3 +5,8 @@
 /Taller-ejb/dist/
 /build/
 /Taller-war/build/
+/Dominio-ejb/build/
+/Dominio-ejb/dist/
+/Dominio-ejb/nbproject/private/
+/Servicios/build/
+/Servicios/nbproject/private/
