@@ -50,13 +50,46 @@ public class PartidoResource {
      *  -La hora debe estar entre 0 y 23
      *  -El token no puede ser vacio
      *  -El token debe corresponder a un jugador
-     * @param hora 
+     * @param fecha 
      * @param token 
      * @return 
      */
     @PUT
     @Path("registrarJugadorAPartido")
-    public Response registrarJugadorAPartido(@QueryParam("hora") Date hora, @QueryParam("token") String token) {
+    public Response registrarJugadorAPartido(@QueryParam("fecha") Date fecha, @QueryParam("token") String token) {
+        if(VACIO.equals(token) || fecha != null){
+            return Response.status(Status.BAD_REQUEST).build();
+        } else {
+            Usuario user = usuarioBean.buscarUsuario(token);
+            if(user != null){
+                if(user instanceof Jugador){
+                    Jugador jugador = (Jugador) user;
+                    partidoBean.registrarJugadorAPartido(fecha,jugador);
+                    return Response.accepted().build();
+                } else {
+                    return Response.status(Status.FORBIDDEN).build();
+                }
+            } else {
+               return Response.status(Status.UNAUTHORIZED).build(); 
+            }
+        }
+    }
+    
+     /**
+     * Un Jugador se registra a una cola de espera para armar el armado de un 
+     * partido en una determinada hora.
+     * Validaciones:
+     *  -La hora debe estar entre 0 y 23
+     *  -El token no puede ser vacio
+     *  -El token debe corresponder a un jugador
+     * @param fecha 
+     * @param id
+     * @param token 
+     * @return 
+     */
+    @PUT
+    @Path("registrarEquipoAPartido")
+    public Response registrarEquipoAPartido(@QueryParam("fecha") Date fecha, @QueryParam("id") Long id, @QueryParam("token") String token) {
         if(VACIO.equals(token)){
             return Response.status(Status.BAD_REQUEST).build();
         } else {
@@ -64,7 +97,7 @@ public class PartidoResource {
             if(user != null){
                 if(user instanceof Jugador){
                     Jugador jugador = (Jugador) user;
-                    partidoBean.registrarJugadorAPartido(hora,jugador);
+                    partidoBean.registrarEquipoAPartido(fecha,null);
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
