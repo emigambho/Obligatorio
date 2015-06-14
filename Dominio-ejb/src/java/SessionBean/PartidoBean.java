@@ -22,10 +22,10 @@ import partido.util.EstadoPartido;
 @Stateless
 public class PartidoBean {
 
-    @Resource(lookup = "jms/PartidoQueue")
+    @Resource(lookup = "PartidoQueue")
     private Queue colaDePartidos;
 
-    @Resource(lookup = "jms/PartidoQueueFactory")
+    @Resource(lookup = "PartidoQueueFactory")
     private QueueConnectionFactory connectionFactory;
 
     @PersistenceContext
@@ -53,8 +53,8 @@ public class PartidoBean {
     public List<Equipo> ObtenerEquiposPartido(Long idPartido) {
         Partido partido = BuscarPartido(idPartido);
         List<Equipo> equipos = new ArrayList<Equipo>();
-        equipos.add(partido.getEquipoB());
-        equipos.add(partido.getEquipoA());
+        equipos.add(partido.getEquipos().get(0));
+        equipos.add(partido.getEquipos().get(1));
         return equipos;
     }
 
@@ -110,8 +110,8 @@ public class PartidoBean {
     }
 
     public void ActualizarCalsificaciones(Partido partido) {
-        Equipo equipoA = partido.getEquipoA();
-        Equipo equipoB = partido.getEquipoB();
+        Equipo equipoA = partido.getEquipos().get(0);
+        Equipo equipoB = partido.getEquipos().get(1);
         Integer clasificacionEquipoA = equipoA.getClasificacion();
         Integer clasificacionEquipoB = equipoB.getClasificacion();
         Integer golesEquipoA = partido.getGolesA();
@@ -126,9 +126,11 @@ public class PartidoBean {
         } else if (golesEquipoA.compareTo(golesEquipoB) > 0) {
             ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoA, clasificacionEquipoB);
             ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoA);
+            // Falta restarle al los jugadores del equipo perdedor
         } else {
             ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoB, clasificacionEquipoA);
             ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoB);
+            // Falta restarle al los jugadores del equipo perdedor
         }
         equipoA.setClasificacion(clasificacionEquipoA);
         equipoB.setClasificacion(clasificacionEquipoB);

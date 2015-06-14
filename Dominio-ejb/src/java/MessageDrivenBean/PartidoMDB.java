@@ -11,7 +11,7 @@ import entidad.Equipo;
 import entidad.Jugador;
 import java.util.Date;
 
-@MessageDriven(mappedName = "jms/PartidoQueue", activationConfig = {
+@MessageDriven(mappedName = "PartidoQueue", activationConfig = {
     @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Queue")
 })
 public class PartidoMDB implements MessageListener {

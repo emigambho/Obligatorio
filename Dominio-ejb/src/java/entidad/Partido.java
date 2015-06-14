@@ -2,12 +2,16 @@ package entidad;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -22,13 +26,13 @@ public class Partido implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     
-    @NotNull
-    @OneToMany
-    private Equipo equipoA;
-    
-    @NotNull
-    @OneToMany
-    private Equipo equipoB;
+    @ManyToMany(cascade = CascadeType.ALL) 
+    @JoinTable(name="equipo_partido", 
+            joinColumns = @JoinColumn(name="partido_id", 
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="equipo_id", 
+                    referencedColumnName = "id"))
+    private List<Equipo> equipos;
     
     @NotNull
     private Integer golesA;
@@ -56,18 +60,14 @@ public class Partido implements Serializable {
     public Partido() {
     }
 
-    public Partido(Long id, Equipo equipoA, Equipo equipoB, Date fechaF, Date fechaI, EstadoPartido estado) {
-        this.id = id;
-        this.equipoA = equipoA;
-        this.equipoB = equipoB;
+    public Partido(List<Equipo> equipos, Date fechaF, Date fechaI, EstadoPartido estado) {
+        this.equipos = equipos;
         this.golesA = 0;
         this.golesB = 0;
         this.fechaF = fechaF;
         this.fechaI = fechaI;
         this.estado = estado;
     }
-    
-    
 
     public Long getId() {
         return id;
@@ -77,20 +77,12 @@ public class Partido implements Serializable {
         this.id = id;
     }
 
-    public Equipo getEquipoA() {
-        return equipoA;
+    public List<Equipo> getEquipos() {
+        return equipos;
     }
 
-    public void setEquipoA(Equipo equipoA) {
-        this.equipoA = equipoA;
-    }
-
-    public Equipo getEquipoB() {
-        return equipoB;
-    }
-
-    public void setEquipoB(Equipo equipoB) {
-        this.equipoB = equipoB;
+    public void setEquipos(List<Equipo> equipos) {
+        this.equipos = equipos;
     }
 
     public Integer getGolesA() {
@@ -157,21 +149,15 @@ public class Partido implements Serializable {
             return false;
         }
         final Partido other = (Partido) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+        if (!this.id.equals(other.id)) {
             return false;
-        }
-        if (this.equipoA != other.equipoA && (this.equipoA == null || !this.equipoA.equals(other.equipoA))) {
-            return false;
-        }
-        if (this.equipoB != other.equipoB && (this.equipoB == null || !this.equipoB.equals(other.equipoB))) {
-            return false;
-        }
+        } 
         return true;
     }
 
     @Override
     public String toString() {
-        return "Partido{" + "equipoA=" + equipoA + ", equipoB=" + equipoB + ", golesA=" + golesA + ", golesB=" + golesB + '}';
+        return "Partido{" + "equipoA=" + equipos.get(0) + ", equipoB=" + equipos.get(0) + ", golesA=" + golesA + ", golesB=" + golesB + '}';
     }
     
     
