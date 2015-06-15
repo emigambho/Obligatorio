@@ -3,11 +3,15 @@ package serviciosRest;
 import SessionBean.PartidoBean;
 import SessionBean.UsuarioBean;
 import com.google.gson.Gson;
+import entidad.Administrador;
 import entidad.Jugador;
 import entidad.Partido;
 import entidad.Usuario;
+import exception.PartidoException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.ws.rs.PUT;
@@ -39,16 +43,14 @@ public class PartidoResource {
 
     @GET
     @Produces("application/json")
-    public Response getJson() {
+    public Response listarPartidos() {
         List<Partido> list = partidoBean.listarPartidos();        
         return Response.ok(gson.toJson(list)).build();
-    }
-    
+    }    
     /**
      * Un Jugador se registra a una cola de espera para armar el armado de un 
      * partido en una determinada hora.
      * Validaciones:
-     *  -La hora debe estar entre 0 y 23
      *  -El token no puede ser vacio
      *  -El token debe corresponder a un jugador
      * @param fecha 
@@ -90,7 +92,7 @@ public class PartidoResource {
      */
     @PUT
     @Path("registrarEquipoAPartido")
-    public Response registrarEquipoAPartido(@QueryParam("fecha") Date fecha, @QueryParam("id") Long id, @QueryParam("token") String token) {
+    public Response registrarEquipoAPartido(@QueryParam("fecha") Date fecha, @QueryParam("id") Long id, @HeaderParam("token") String token) {
         if(VACIO.equals(token)){
             return Response.status(Status.BAD_REQUEST).build();
         } else {
@@ -115,5 +117,31 @@ public class PartidoResource {
 //        servicioBean.registrarCambioEstado(idSolicitud, servicio, estado);
 //        return Response.accepted().build();
 //    }
+
+    @PUT //ACTUALIZAR ALGO EXISTENTE
+    @Path("registrarEquipoAPartido")
+    public Response ConfirmarAPartido(@QueryParam("id") Long id,@QueryParam("fechaInicio") Date fechaInicio, @HeaderParam("token") String token) {
+        if(VACIO.equals(token)){
+            return Response.status(Status.BAD_REQUEST).build();
+        } else {
+            Usuario user = usuarioBean.buscarUsuario(token);
+            if(user != null){
+                if(user instanceof Administrador){
+                    try {
+                        Administrador administrador = (Administrador) user;
+                        partidoBean.confirmarPartido(id,fechaInicio,administrador);
+                        return Response.accepted().build();
+                    } catch (PartidoException ex) {
+                        Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
+                        return Response.serverError().entity(ex).build();
+                    }
+                } else {
+                    return Response.status(Status.FORBIDDEN).build();
+                }
+            } else {
+               return Response.status(Status.UNAUTHORIZED).build(); 
+            }
+        }
+    }
     
 }

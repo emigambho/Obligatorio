@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -32,16 +34,20 @@ public class Local implements Serializable{
     @NotNull
     private String direccion;
     
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="Local_cancha", 
-            joinColumns = @JoinColumn(name="local_id", 
-                    referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="cancha_id", 
-                    referencedColumnName = "id"))
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Cancha> canchas;
+    
     @NotBlank
     @NotNull
     private Integer telefono;
+    
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="local_administrador", 
+            joinColumns = @JoinColumn(name="local_id", 
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="administrador_id", 
+                    referencedColumnName = "id"))
+    private List<Administrador> administradores;
 
     public Local()
     {
@@ -103,6 +109,14 @@ public class Local implements Serializable{
 
     public void setHoraCierre(Integer horaCierre) {
         this.horaCierre = horaCierre;
+    }
+
+    public List<Administrador> getAdministradores() {
+        return administradores;
+    }
+
+    public void setAdministradores(List<Administrador> administradores) {
+        this.administradores = administradores;
     }
 
     @Override

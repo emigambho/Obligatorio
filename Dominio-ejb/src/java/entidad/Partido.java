@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -57,6 +58,10 @@ public class Partido implements Serializable {
     
     @NotNull
     private EstadoPartido estado;
+    
+
+    @ManyToOne
+    private Cancha cancha;
       
     
     
@@ -135,6 +140,14 @@ public class Partido implements Serializable {
     
     public void setEsadoParido(EstadoPartido estado){
         this.estado = estado;
+    }
+
+    public Cancha getCancha() {
+        return cancha;
+    }
+
+    public void setCancha(Cancha cancha) {
+        this.cancha = cancha;
     }
     
     @Override
