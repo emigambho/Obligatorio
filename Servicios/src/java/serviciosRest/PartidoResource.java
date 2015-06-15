@@ -13,11 +13,11 @@ import javax.ejb.EJB;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 
 @ManagedBean
 @Path("partidos")
@@ -34,6 +34,7 @@ public class PartidoResource {
     UsuarioBean usuarioBean;
 
     public PartidoResource() {
+        gson = new Gson();
     }
 
     @GET
@@ -56,7 +57,7 @@ public class PartidoResource {
      */
     @PUT
     @Path("registrarJugadorAPartido")
-    public Response registrarJugadorAPartido(@QueryParam("fecha") Date fecha, @QueryParam("token") String token) {
+    public Response registrarJugadorAPartido(@QueryParam("fecha") Date fecha, @HeaderParam("token") String token) {
         if(VACIO.equals(token) || fecha != null){
             return Response.status(Status.BAD_REQUEST).build();
         } else {

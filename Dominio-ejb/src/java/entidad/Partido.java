@@ -15,10 +15,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import org.hibernate.validator.constraints.NotBlank;
 import partido.util.EstadoPartido;
 
 @Entity
+@XmlRootElement
 public class Partido implements Serializable {
     private static final long serialVersionUID = 1L;
     
@@ -77,6 +80,7 @@ public class Partido implements Serializable {
         this.id = id;
     }
 
+    @XmlTransient
     public List<Equipo> getEquipos() {
         return equipos;
     }
