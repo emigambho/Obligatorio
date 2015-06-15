@@ -6,16 +6,30 @@ import entidad.Jugador;
 import java.util.Date;
 import java.util.List;
 import entidad.Usuario;
-import javax.ejb.Stateless;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-@Stateless
+@Singleton
 public class UsuarioBean {
 
     @PersistenceContext
     EntityManager em;
+    
+    private Map<String,Usuario> usuarios;
 
+    public UsuarioBean() {
+        this.usuarios = new HashMap<String, Usuario>();
+    }
+    
+    private void guardarUsuario(Usuario usuario){
+        byte[] bytesEncoded = Base64.getEncoder().encode((usuario.getEmail()+usuario.getContrasenia()).getBytes());
+        String token = new String(bytesEncoded);
+        usuarios.put(token,usuario);
+    }
 
     public Administrador CrearAdministrador(String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono,Integer puntuacion,
             String email,String contrasenia,String direccion) {
@@ -51,7 +65,7 @@ public class UsuarioBean {
     
    
     public Usuario buscarUsuario(String token) {
-        return null;
+        return usuarios.get(token);
     }
 
 }
