@@ -21,6 +21,8 @@ import partido.util.EstadoPartido;
 
 @Stateless
 public class PartidoBean {
+    
+    public int nueva;
 
     @Resource(lookup = "PartidoQueue")
     private Queue colaDePartidos;
