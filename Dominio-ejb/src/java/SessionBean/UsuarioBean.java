@@ -3,6 +3,7 @@ package SessionBean;
 import entidad.Administrador;
 import entidad.Equipo;
 import entidad.Jugador;
+import entidad.Partido;
 import java.util.Date;
 import java.util.List;
 import entidad.Usuario;
@@ -13,6 +14,7 @@ import javax.persistence.PersistenceContext;
 @Stateless
 public class UsuarioBean {
 
+   
     @PersistenceContext
     EntityManager em;
 
@@ -53,5 +55,15 @@ public class UsuarioBean {
     public Usuario buscarUsuario(String token) {
         return null;
     }
+    
+     public boolean esAdministradorDelLocal(Administrador administrador, Partido partido) {
+         for(Administrador adm: partido.getCancha().getLocal().getAdministradores()){
+             if(adm.equals(administrador)){
+                 return true;
+             }
+         }
+         return false;
+    }
+
 
 }

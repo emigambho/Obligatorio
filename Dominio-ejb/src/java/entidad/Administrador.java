@@ -6,14 +6,23 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
 
 @Entity
 public class Administrador extends Usuario implements Serializable{
    
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="local_administrador", 
+            joinColumns = @JoinColumn(name="administrador_id", 
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="local_id", 
+                    referencedColumnName = "id"))
     private List<Local> locales;
+    
     
     public Administrador(){}
 

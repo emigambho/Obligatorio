@@ -1,12 +1,15 @@
 package SessionBean;
 
+import entidad.Administrador;
 import entidad.Equipo;
 import entidad.Jugador;
 import entidad.Partido;
+import exception.PartidoException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jms.MapMessage;
 import javax.jms.Queue;
@@ -21,8 +24,12 @@ import partido.util.EstadoPartido;
 
 @Stateless
 public class PartidoBean {
-    
-    public int nueva;
+
+    @EJB
+    public EquipoBean equipoBean;
+
+    @EJB
+    public UsuarioBean usuarioBean;
 
     @Resource(lookup = "PartidoQueue")
     private Queue colaDePartidos;
@@ -33,9 +40,66 @@ public class PartidoBean {
     @PersistenceContext
     EntityManager em;
 
-    public Partido crearPartido(Partido partido) {
-        em.persist(partido);
-        return partido;
+    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado) {
+        Equipo equipoA = equipoBean.buscarEquipo(idEquipoA);
+        Equipo equipoB = equipoBean.buscarEquipo(idEquipoB);
+        List<Equipo> equipos = new ArrayList<Equipo>(2);
+        if (equipoB != null && equipoA != null) {
+            equipos.add(equipoA);
+            equipos.add(equipoB);
+            Partido partido = new Partido(equipos, fechaF, fechaI, estado);
+            partido.setEsadoParido(EstadoPartido.RESERVADO);
+            em.persist(partido);
+            return partido;
+        }
+        return null;
+    }
+
+    public void cancelarPartido(Long idPartido) {
+        Partido partido = buscarPartido(idPartido);
+        if (partido != null && EstadoPartido.RESERVADO.equals(partido.getEstado())) {
+            partido.setEsadoParido(EstadoPartido.CANCELADO);
+            em.persist(partido);
+        }
+    }
+
+    public void terminarPartido(Long idPartido, Date fechaFin, Integer golesEquipoA, Integer golesEquipoB) throws PartidoException {
+        Partido partido = buscarPartido(idPartido);
+        Date fechaActual = new Date();
+        if (partido != null) {
+            if (fechaActual.compareTo(fechaFin) >= 0) {
+                partido.setEsadoParido(EstadoPartido.TERMINADO);
+                partido.setGolesA(golesEquipoA);
+                partido.setGolesB(golesEquipoB);
+                em.persist(partido);
+            } else {
+                throw new PartidoException();
+            }
+        }
+    }
+
+    public void confirmarPartido(Long idPartido, Date fechaInicio, Administrador administrador) throws PartidoException {
+        Partido partido = buscarPartido(idPartido);
+        Date fechaActual = new Date();
+        if (partido != null) {
+            if (fechaActual.compareTo(fechaInicio) < 0) {
+                if (partido.getEquipos().size() == 2) {
+                    if (partido.getEquipos().get(0).getJugadores().size() == 5) {
+                        if (partido.getEquipos().get(1).getJugadores().size() == 5) {
+                            if (usuarioBean.esAdministradorDelLocal(administrador, partido)) {
+                                partido.setEsadoParido(EstadoPartido.CONFIRMADO);
+                            }
+                        } else {
+                            throw new PartidoException();
+                        }
+                    } else {
+                        throw new PartidoException();
+                    }
+                }
+            } else {
+                throw new PartidoException();
+            }
+        }
     }
 
     public Partido actualizarPartido(Partido partido) {
@@ -47,13 +111,13 @@ public class PartidoBean {
         return em.createQuery("select p from Partido p").getResultList();
     }
 
-    public Partido BuscarPartido(Long idPartido) {
+    public Partido buscarPartido(Long idPartido) {
         return (Partido) em.createQuery("select p from Partido p where p.id = :idPartido")
                 .setParameter("idPartido", idPartido).getSingleResult();
     }
 
     public List<Equipo> ObtenerEquiposPartido(Long idPartido) {
-        Partido partido = BuscarPartido(idPartido);
+        Partido partido = buscarPartido(idPartido);
         List<Equipo> equipos = new ArrayList<Equipo>();
         equipos.add(partido.getEquipos().get(0));
         equipos.add(partido.getEquipos().get(1));
@@ -61,7 +125,7 @@ public class PartidoBean {
     }
 
     public void terminarPartido(Long idPartido, Integer golesA, Integer golesB) {
-        Partido partido = BuscarPartido(idPartido);
+        Partido partido = buscarPartido(idPartido);
         partido.setGolesA(golesA);
         partido.setGolesB(golesB);
         ActualizarCalsificaciones(partido);
@@ -123,7 +187,7 @@ public class PartidoBean {
             ActualizarCalsificacionesEquiposEmpate(clasificacionEquipoA, clasificacionEquipoB);
             ActualizarCalsificacionesJugadoresEmpate(equipoA);
             ActualizarCalsificacionesJugadoresEmpate(equipoB);
-        // SI GANA EL PARTIDO "A", SON DOS PUNTOS PARA "A" Y -1 PARA "B", AL MENOS QUE "A" TENGA 10(NO SUMA) Y SI TIENE 9 PUNTOS 
+            // SI GANA EL PARTIDO "A", SON DOS PUNTOS PARA "A" Y -1 PARA "B", AL MENOS QUE "A" TENGA 10(NO SUMA) Y SI TIENE 9 PUNTOS 
             //SUMA SOLO 1 Y "B" SI TIENE PUNTAJE 0 NO RESTA, SI EL PARTIDO O GANA "B" IDEM CON LOS PUNTAJES CAMBIADOS
         } else if (golesEquipoA.compareTo(golesEquipoB) > 0) {
             ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoA, clasificacionEquipoB);
