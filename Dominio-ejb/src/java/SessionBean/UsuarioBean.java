@@ -101,5 +101,8 @@ public class UsuarioBean {
          return false;
     }
 
+    public Map<String, UsuarioOAuth> getUsuarios() {
+        return usuarios;
+    }
 
 }
