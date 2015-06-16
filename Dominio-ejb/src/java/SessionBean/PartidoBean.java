@@ -40,38 +40,46 @@ public class PartidoBean {
     @PersistenceContext
     EntityManager em;
 
-    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado) {
+    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado, Administrador administrador) {
         Equipo equipoA = equipoBean.buscarEquipo(idEquipoA);
         Equipo equipoB = equipoBean.buscarEquipo(idEquipoB);
         List<Equipo> equipos = new ArrayList<Equipo>(2);
         if (equipoB != null && equipoA != null) {
-            equipos.add(equipoA);
-            equipos.add(equipoB);
-            Partido partido = new Partido(equipos, fechaF, fechaI, estado);
-            partido.setEsadoParido(EstadoPartido.RESERVADO);
-            em.persist(partido);
-            return partido;
+            if (fechaI.compareTo(fechaF) >= 0) {
+                equipos.add(equipoA);
+                equipos.add(equipoB);
+                Partido partido = new Partido(equipos, fechaF, fechaI, estado);
+                if (usuarioBean.esAdministradorDelLocal(administrador, partido)) {
+                    partido.setEsadoParido(EstadoPartido.RESERVADO);
+                    em.persist(partido);
+                    return partido;
+                }
+            }
         }
         return null;
     }
 
-    public void cancelarPartido(Long idPartido) {
+    public void cancelarPartido(Long idPartido, Administrador administrador) {
         Partido partido = buscarPartido(idPartido);
         if (partido != null && EstadoPartido.RESERVADO.equals(partido.getEstado())) {
-            partido.setEsadoParido(EstadoPartido.CANCELADO);
-            em.persist(partido);
+            if (usuarioBean.esAdministradorDelLocal(administrador, partido)) {
+                partido.setEsadoParido(EstadoPartido.CANCELADO);
+                em.persist(partido);
+            }
         }
     }
 
-    public void terminarPartido(Long idPartido, Date fechaFin, Integer golesEquipoA, Integer golesEquipoB) throws PartidoException {
+    public void terminarPartido(Long idPartido, Date fechaFin, Integer golesEquipoA, Integer golesEquipoB, Administrador administrador) throws PartidoException {
         Partido partido = buscarPartido(idPartido);
         Date fechaActual = new Date();
         if (partido != null) {
             if (fechaActual.compareTo(fechaFin) >= 0) {
-                partido.setEsadoParido(EstadoPartido.TERMINADO);
-                partido.setGolesA(golesEquipoA);
-                partido.setGolesB(golesEquipoB);
-                em.persist(partido);
+                if (usuarioBean.esAdministradorDelLocal(administrador, partido)) {
+                    partido.setEsadoParido(EstadoPartido.TERMINADO);
+                    partido.setGolesA(golesEquipoA);
+                    partido.setGolesB(golesEquipoB);
+                    em.persist(partido);
+                }
             } else {
                 throw new PartidoException();
             }
