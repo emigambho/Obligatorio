@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import usuario.util.UsuarioOAuth;
 
 @ManagedBean
 @Path("partidos")
@@ -47,6 +48,7 @@ public class PartidoResource {
         List<Partido> list = partidoBean.listarPartidos();        
         return Response.ok(gson.toJson(list)).build();
     }    
+    
     /**
      * Un Jugador se registra a una cola de espera para armar el armado de un 
      * partido en una determinada hora.
@@ -63,10 +65,10 @@ public class PartidoResource {
         if(VACIO.equals(token) || fecha != null){
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            Usuario user = usuarioBean.buscarUsuario(token);
+            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
             if(user != null){
-                if(user instanceof Jugador){
-                    Jugador jugador = (Jugador) user;
+                if(user.esJugador()){
+                    Jugador jugador = user.getJugador();
                     partidoBean.registrarJugadorAPartido(fecha,jugador);
                     return Response.accepted().build();
                 } else {
@@ -96,10 +98,10 @@ public class PartidoResource {
         if(VACIO.equals(token)){
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            Usuario user = usuarioBean.buscarUsuario(token);
+            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
             if(user != null){
-                if(user instanceof Jugador){
-                    Jugador jugador = (Jugador) user;
+                if(user.esJugador()){
+                     Jugador jugador = user.getJugador();
                     partidoBean.registrarEquipoAPartido(fecha,null);
                     return Response.accepted().build();
                 } else {
@@ -124,11 +126,11 @@ public class PartidoResource {
         if(VACIO.equals(token)){
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            Usuario user = usuarioBean.buscarUsuario(token);
+            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
             if(user != null){
-                if(user instanceof Administrador){
+                if(user.esAdministrador()){
                     try {
-                        Administrador administrador = (Administrador) user;
+                        Administrador administrador = user.getAdministrador();
                         partidoBean.confirmarPartido(id,fechaInicio,administrador);
                         return Response.accepted().build();
                     } catch (PartidoException ex) {
