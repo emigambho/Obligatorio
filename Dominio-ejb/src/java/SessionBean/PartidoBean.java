@@ -81,7 +81,7 @@ public class PartidoBean {
                     em.persist(partido);
                 }
             } else {
-                throw new PartidoException();
+                throw new PartidoException("Partido.error.1.1","Fecha acual es mayor a fecha fin");
             }
         }
     }
@@ -98,14 +98,14 @@ public class PartidoBean {
                                 partido.setEsadoParido(EstadoPartido.CONFIRMADO);
                             }
                         } else {
-                            throw new PartidoException();
+                            throw new PartidoException("Partido.error.2.2","Equipo B no llega a 5 jugadores");
                         }
                     } else {
-                        throw new PartidoException();
+                        throw new PartidoException("Partido.error.2.1","Equipo A no llega a 5 jugadores");
                     }
                 }
             } else {
-                throw new PartidoException();
+                throw new PartidoException("Partido.error.1.2","Fecha acual es mayor a fecha Inicio");
             }
         }
     }
