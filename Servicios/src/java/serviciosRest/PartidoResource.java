@@ -18,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
@@ -46,6 +47,14 @@ public class PartidoResource {
     @GET
     @Produces("application/json")
     public Response listarPartidos() {
+        List<Partido> list = partidoBean.listarPartidos();
+        return Response.ok(gson.toJson(list)).build();
+    }    
+    
+    @GET
+    @Produces("application/json")
+    @Path("{id}")
+    public Response listarPartidos(@PathParam("id") idPartido) {
         List<Partido> list = partidoBean.listarPartidos();
         return Response.ok(gson.toJson(list)).build();
     }    
@@ -117,10 +126,10 @@ public class PartidoResource {
         if (VACIO.equals(token)) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            Usuario user = usuarioBean.buscarUsuario(token);
-            if (user != null) {
-                if (user instanceof Administrador) {
-                    Administrador administrador = (Administrador) user;
+            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
+            if(user != null){
+                if(user.esAdministrador()){
+                    Administrador administrador = user.getAdministrador();
                     partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, fechaFin, EstadoPartido.RESERVADO, administrador);
                     return Response.accepted().build();
                 } else {
@@ -173,10 +182,10 @@ public class PartidoResource {
         if (VACIO.equals(token)) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            Usuario user = usuarioBean.buscarUsuario(token);
-            if (user != null) {
-                if (user instanceof Administrador) {
-                    Administrador administrador = (Administrador) user;
+            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
+            if(user != null){
+                if(user.esAdministrador()){
+                    Administrador administrador = user.getAdministrador();
                     partidoBean.cancelarPartido(id, administrador);
                     return Response.accepted().build();
 
@@ -195,11 +204,11 @@ public class PartidoResource {
         if (VACIO.equals(token)) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
-            Usuario user = usuarioBean.buscarUsuario(token);
-            if (user != null) {
-                if (user instanceof Administrador) {
+            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
+            if(user != null){
+                if(user.esAdministrador()){
                     try {
-                        Administrador administrador = (Administrador) user;
+                        Administrador administrador = user.getAdministrador();
                         partidoBean.terminarPartido(id, fechaIinicio, golesA, golesB, administrador);
                         return Response.accepted().build();
                     } catch (PartidoException ex) {
