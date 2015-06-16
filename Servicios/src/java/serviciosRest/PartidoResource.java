@@ -48,16 +48,23 @@ public class PartidoResource {
     public Response listarPartidos() {
         List<Partido> list = partidoBean.listarPartidos();
         return Response.ok(gson.toJson(list)).build();
-    }    
-    
+    }
+
     @GET
     @Produces("application/json")
     @Path("estado/{id}")
-    public Response listarPartidos(@PathParam("id") idPartido) {
-        List<Partido> list = partidoBean.listarPartidos();
-        return Response.ok(gson.toJson(list)).build();
-    }    
-    
+    public Response verEstadoPartido(@PathParam("id") Long idPartido) {
+        EstadoPartido estado = partidoBean.verEstadoPartido(idPartido);
+        return Response.ok(gson.toJson(estado)).build();
+    }
+    @GET
+    @Produces("application/json")
+    @Path("{id}")
+    public Response verInfoPartido(@PathParam("id") Long idPartido) {
+        Partido partido = partidoBean.verInfoPartido(idPartido);
+        return Response.ok(gson.toJson(partido)).build();
+    }
+
     /**
      * Un Jugador se registra a una cola de espera para armar el armado de un
      * partido en una determinada hora. Validaciones: -El token no puede ser
@@ -74,10 +81,10 @@ public class PartidoResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-            if(user != null){
-                if(user.esJugador()){
+            if (user != null) {
+                if (user.esJugador()) {
                     Jugador jugador = user.getJugador();
-                    partidoBean.registrarJugadorAPartido(fecha,jugador);
+                    partidoBean.registrarJugadorAPartido(fecha, jugador);
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -106,10 +113,10 @@ public class PartidoResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-            if(user != null){
-                if(user.esJugador()){
-                     Jugador jugador = user.getJugador();
-                    partidoBean.registrarEquipoAPartido(fecha,null);
+            if (user != null) {
+                if (user.esJugador()) {
+                    Jugador jugador = user.getJugador();
+                    partidoBean.registrarEquipoAPartido(fecha, null);
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -119,15 +126,16 @@ public class PartidoResource {
             }
         }
     }
-      @PUT
+
+    @PUT
     @Path("crearPartido")
-    public Response crearPartido(@QueryParam("idEquipoA") Long idEquipoA,@QueryParam("idEquipoB") Long idEquipoB,@QueryParam("fechaInicio") Date fechaInicio,@QueryParam("fechaFin") Date fechaFin, @HeaderParam("token") String token) {
+    public Response crearPartido(@QueryParam("idEquipoA") Long idEquipoA, @QueryParam("idEquipoB") Long idEquipoB, @QueryParam("fechaInicio") Date fechaInicio, @QueryParam("fechaFin") Date fechaFin, @HeaderParam("token") String token) {
         if (VACIO.equals(token)) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-            if(user != null){
-                if(user.esAdministrador()){
+            if (user != null) {
+                if (user.esAdministrador()) {
                     Administrador administrador = user.getAdministrador();
                     partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, fechaFin, EstadoPartido.RESERVADO, administrador);
                     return Response.accepted().build();
@@ -146,9 +154,6 @@ public class PartidoResource {
 //        servicioBean.registrarCambioEstado(idSolicitud, servicio, estado);
 //        return Response.accepted().build();
 //    }
-    
-    
-    
     @PUT //ACTUALIZAR ALGO EXISTENTE
     @Path("confirmarAPartido")
     public Response confirmarAPartido(@QueryParam("id") Long id, @QueryParam("fechaInicio") Date fechaInicio, @HeaderParam("token") String token) {
@@ -156,11 +161,11 @@ public class PartidoResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-            if(user != null){
-                if(user.esAdministrador()){
+            if (user != null) {
+                if (user.esAdministrador()) {
                     try {
                         Administrador administrador = user.getAdministrador();
-                        partidoBean.confirmarPartido(id,fechaInicio,administrador);
+                        partidoBean.confirmarPartido(id, fechaInicio, administrador);
                         return Response.accepted().build();
                     } catch (PartidoException ex) {
                         Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
@@ -182,8 +187,8 @@ public class PartidoResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-            if(user != null){
-                if(user.esAdministrador()){
+            if (user != null) {
+                if (user.esAdministrador()) {
                     Administrador administrador = user.getAdministrador();
                     partidoBean.cancelarPartido(id, administrador);
                     return Response.accepted().build();
@@ -204,8 +209,8 @@ public class PartidoResource {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-            if(user != null){
-                if(user.esAdministrador()){
+            if (user != null) {
+                if (user.esAdministrador()) {
                     try {
                         Administrador administrador = user.getAdministrador();
                         partidoBean.terminarPartido(id, fechaIinicio, golesA, golesB, administrador);

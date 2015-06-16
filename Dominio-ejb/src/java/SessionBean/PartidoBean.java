@@ -81,7 +81,7 @@ public class PartidoBean {
                     em.persist(partido);
                 }
             } else {
-                throw new PartidoException();
+                throw new PartidoException("Partido.error.1.1","Fecha acual es mayor a fecha fin");
             }
         }
     }
@@ -98,14 +98,14 @@ public class PartidoBean {
                                 partido.setEsadoParido(EstadoPartido.CONFIRMADO);
                             }
                         } else {
-                            throw new PartidoException();
+                            throw new PartidoException("Partido.error.2.2","Equipo B no llega a 5 jugadores");
                         }
                     } else {
-                        throw new PartidoException();
+                        throw new PartidoException("Partido.error.2.1","Equipo A no llega a 5 jugadores");
                     }
                 }
             } else {
-                throw new PartidoException();
+                throw new PartidoException("Partido.error.1.2","Fecha acual es mayor a fecha Inicio");
             }
         }
     }
@@ -160,13 +160,20 @@ public class PartidoBean {
         }
     }
 
-    public void ActualizarCalsificacionesJugadoresGanaUnEquipo(Equipo equipo) {
-        for (Jugador jugador : equipo.getJugadores()) {
+    public void ActualizarCalsificacionesJugadoresGanaUnEquipo(Equipo equipoA,Equipo equipoB) {
+        for (Jugador jugador : equipoA.getJugadores()) {
             Integer puntuacion = jugador.getPuntuacion();
             if (puntuacion < 9) {
                 puntuacion = puntuacion + 2;
             } else if (puntuacion == 9) {
                 puntuacion++;
+            }
+            jugador.setPuntuacion(puntuacion);
+        }
+        for(Jugador jugador : equipoB.getJugadores()){
+            Integer puntuacion = jugador.getPuntuacion();
+            if(puntuacion>0){
+                puntuacion--;
             }
             jugador.setPuntuacion(puntuacion);
         }
@@ -199,11 +206,11 @@ public class PartidoBean {
             //SUMA SOLO 1 Y "B" SI TIENE PUNTAJE 0 NO RESTA, SI EL PARTIDO O GANA "B" IDEM CON LOS PUNTAJES CAMBIADOS
         } else if (golesEquipoA.compareTo(golesEquipoB) > 0) {
             ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoA, clasificacionEquipoB);
-            ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoA);
+            ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoA,equipoB);
             // Falta restarle al los jugadores del equipo perdedor
         } else {
             ActualizarCalsificacionesEquiposGanaUnEquipo(clasificacionEquipoB, clasificacionEquipoA);
-            ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoB);
+            ActualizarCalsificacionesJugadoresGanaUnEquipo(equipoB,equipoA);
             // Falta restarle al los jugadores del equipo perdedor
         }
         equipoA.setClasificacion(clasificacionEquipoA);
@@ -250,4 +257,21 @@ public class PartidoBean {
 
     public void registrarEquipo(Date fecha, Equipo equipo) {
     }
+    
+    public EstadoPartido verEstadoPartido(Long idPartido){
+        Partido partido = buscarPartido(idPartido);
+        if(partido!=null){
+            return partido.getEstado();
+        }
+        return null;
+    }
+    
+    public Partido verInfoPartido(Long idPartido){
+        Partido partido = buscarPartido(idPartido);
+        if(partido!=null){
+            return partido;
+        }
+        return null;
+    }
+            
 }
