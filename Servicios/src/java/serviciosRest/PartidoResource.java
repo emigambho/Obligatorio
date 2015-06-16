@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import entidad.Administrador;
 import entidad.Jugador;
 import entidad.Partido;
-import entidad.Usuario;
 import exception.PartidoException;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +52,7 @@ public class PartidoResource {
     
     @GET
     @Produces("application/json")
-    @Path("{id}")
+    @Path("estado/{id}")
     public Response listarPartidos(@PathParam("id") idPartido) {
         List<Partido> list = partidoBean.listarPartidos();
         return Response.ok(gson.toJson(list)).build();
