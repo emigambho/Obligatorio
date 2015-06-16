@@ -13,24 +13,30 @@ import java.util.Map;
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import usuario.util.UsuarioOAuth;
 
 @Singleton
 public class UsuarioBean {
 
-   
     @PersistenceContext
     EntityManager em;
     
-    private Map<String,Usuario> usuarios;
+    private Map<String,UsuarioOAuth> usuarios;
 
     public UsuarioBean() {
-        this.usuarios = new HashMap<String, Usuario>();
+        this.usuarios = new HashMap<String, UsuarioOAuth>();
     }
     
-    private void guardarUsuario(Usuario usuario){
+    private UsuarioOAuth guardarUsuario(Usuario usuario){
         byte[] bytesEncoded = Base64.getEncoder().encode((usuario.getEmail()+usuario.getContrasenia()).getBytes());
         String token = new String(bytesEncoded);
-        usuarios.put(token,usuario);
+        UsuarioOAuth user = null;
+        if(usuarios.get(token)!=null){
+             user = new UsuarioOAuth(usuario,new Date(), token);
+            usuarios.put(token,user);
+        }
+        
+        return user;
     }
 
     public Administrador CrearAdministrador(String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono,Integer puntuacion,
@@ -55,18 +61,34 @@ public class UsuarioBean {
         return em.createQuery("select j from Jugador j").getResultList();
     }
     
-    public Administrador IniciarSesionAdministrador(String email, String contrasenia){
-        return (Administrador)em.createQuery("select a from Administrador a where a.email = :email and a.contrasenia = :contrasenia")
-        .setParameter("email", email).setParameter("contrasenia", contrasenia).getSingleResult();
+    public UsuarioOAuth IniciarSesionAdministrador(String email, String contrasenia){
+        Administrador admin = (Administrador)em.createQuery("select a from Administrador a where a.email = :email and a.contrasenia = :contrasenia")
+            .setParameter("email", email)
+            .setParameter("contrasenia", contrasenia)
+            .getSingleResult();
+        UsuarioOAuth user = null;
+        if(admin != null){
+            user = guardarUsuario(admin);
+        }
+        
+        return user;
     }
     
-    public Jugador IniciarSesionJugador(String email, String contrasenia) {
-          return (Jugador)em.createQuery("select j from Jugador j where j.email = :email and j.contrasenia = :contrasenia")
-                .setParameter("email", email).setParameter("contrasenia", contrasenia).getSingleResult();
+    public UsuarioOAuth IniciarSesionJugador(String email, String contrasenia) {
+        Jugador jugador = (Jugador)em.createQuery("select j from Jugador j where j.email = :email and j.contrasenia = :contrasenia")
+            .setParameter("email", email)
+            .setParameter("contrasenia", contrasenia)
+            .getSingleResult();
+        UsuarioOAuth user = null;
+        if(jugador != null){
+             user = guardarUsuario(jugador);
+        }
+       
+        return user;
     }
     
    
-    public Usuario buscarUsuario(String token) {
+    public UsuarioOAuth buscarUsuario(String token) {
         return usuarios.get(token);
     }
     
