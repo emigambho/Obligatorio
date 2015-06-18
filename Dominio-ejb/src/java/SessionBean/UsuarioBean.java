@@ -24,22 +24,21 @@ public class UsuarioBean {
 
     @PersistenceContext
     EntityManager em;
-    
+
     private Map<String, UsuarioOAuth> usuarios;
 
     public UsuarioBean() {
-        
+
     }
-    
+
     @PostConstruct
     private void startup() {
         this.usuarios = new HashMap<String, UsuarioOAuth>();
         Timer timer = new Timer();
         timer.schedule(new LimpiarTimerTask(), 0, //initial delay
-            60000); //subsequent rate
+                60000); //subsequent rate
     }
 
-     
     private UsuarioOAuth guardarUsuario(Usuario usuario) {
         byte[] bytesEncoded = Base64.getEncoder().encode((usuario.getEmail() + usuario.getContrasenia()).getBytes());
         String token = new String(bytesEncoded);
@@ -64,6 +63,10 @@ public class UsuarioBean {
         Jugador jugador = new Jugador(nombre, fechaNacimiento, equipos, telefono, puntuacion, email, contrasenia, direccion);
         em.persist(jugador);
         return jugador;
+    }
+    
+    public List<Usuario> ListarUsuario() {
+        return em.createQuery("select u from Usuario u").getResultList();
     }
 
     public List<Administrador> ListarAdministradores() {
@@ -104,6 +107,16 @@ public class UsuarioBean {
         return usuarios.get(token);
     }
 
+    public Administrador buscarAdminstradorId(Long idAdministrador) {
+        return (Administrador) em.createQuery("select a from Administrador e where a.id = :id")
+                .setParameter("id", idAdministrador).getSingleResult();
+    }
+    
+     public Jugador buscarJugadorId(Long idJugador) {
+        return (Jugador) em.createQuery("select j from Jugador j where j.id = :id")
+                .setParameter("id", idJugador).getSingleResult();
+    }
+
     public boolean esAdministradorDelLocal(Administrador administrador, Partido partido) {
         for (Administrador adm : partido.getCancha().getLocal().getAdministradores()) {
             if (adm.equals(administrador)) {
@@ -116,7 +129,7 @@ public class UsuarioBean {
     public Map<String, UsuarioOAuth> getUsuarios() {
         return usuarios;
     }
-    
+
     public Jugador buscarJugador(Long id) {
         return (Jugador) em.createQuery("select j from Jugador j where j.id = :id")
                 .setParameter("id", id).getSingleResult();
@@ -126,14 +139,14 @@ public class UsuarioBean {
 
         @Override
         public void run() {
-            List<UsuarioOAuth> usuariosList = new ArrayList<UsuarioOAuth>(usuarios.values());       
+            List<UsuarioOAuth> usuariosList = new ArrayList<UsuarioOAuth>(usuarios.values());
             for (UsuarioOAuth user : usuariosList) {
                 Date fechaActual = new Date();
-                if(fechaActual.compareTo(user.getActivoHasta())>=0){
+                if (fechaActual.compareTo(user.getActivoHasta()) >= 0) {
                     usuarios.remove(user.getToken());
                 }
             }
-            
+
         }
     }
 }
