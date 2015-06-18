@@ -34,7 +34,7 @@ public class Local implements Serializable{
     @NotNull
     private String direccion;
     
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL,mappedBy = "local")
     private List<Cancha> canchas;
     
     @NotBlank

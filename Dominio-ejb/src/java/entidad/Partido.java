@@ -61,6 +61,7 @@ public class Partido implements Serializable {
     
 
     @ManyToOne
+    @JoinColumn(name="CANCHA_ID")
     private Cancha cancha;
       
     
