@@ -32,9 +32,9 @@ public class PartidoMDB implements MessageListener {
                 Equipo equipo = (Equipo)msg.getObject("equipo");
                 
                 if(equipo != null){
-                    partidoBean.registrarEquipo(fecha, equipo);
+                    partidoBean.registrarEquipoPartidoAutomatico(fecha, equipo);
                 } else {
-                    partidoBean.registrarJugador(fecha, jugador);
+                    partidoBean.registrarJugadorPartidoAutomatico(fecha, jugador);
                 }
                 
             }

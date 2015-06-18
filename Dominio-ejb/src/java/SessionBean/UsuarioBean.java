@@ -33,7 +33,7 @@ public class UsuarioBean {
     
     @PostConstruct
     private void startup() {
-        this.usuarios = new HashMap<String, UsuarioOAuth>();
+        this.usuarios = new HashMap<>();
         Timer timer = new Timer();
         timer.schedule(new LimpiarTimerTask(), 0, //initial delay
             60000); //subsequent rate

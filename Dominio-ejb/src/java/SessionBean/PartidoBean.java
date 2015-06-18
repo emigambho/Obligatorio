@@ -251,11 +251,12 @@ public class PartidoBean {
         }
     }
 
-    public void registrarJugador(Date fecha, Jugador jugador) {
-
+    public void registrarJugadorPartidoAutomatico(Date fecha, Jugador jugador) {
+        System.out.println("Registrar jugador de nombre " + jugador.getNombre() +" a un partido automatico con fecha" + fecha);
+        
     }
 
-    public void registrarEquipo(Date fecha, Equipo equipo) {
+    public void registrarEquipoPartidoAutomatico(Date fecha, Equipo equipo) {
     }
     
     public EstadoPartido verEstadoPartido(Long idPartido){
