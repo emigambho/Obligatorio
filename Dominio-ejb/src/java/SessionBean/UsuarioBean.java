@@ -7,9 +7,13 @@ import entidad.Partido;
 import java.util.Date;
 import java.util.List;
 import entidad.Usuario;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,13 +24,22 @@ public class UsuarioBean {
 
     @PersistenceContext
     EntityManager em;
-
+    
     private Map<String, UsuarioOAuth> usuarios;
 
     public UsuarioBean() {
+        
+    }
+    
+    @PostConstruct
+    private void startup() {
         this.usuarios = new HashMap<String, UsuarioOAuth>();
+        Timer timer = new Timer();
+        timer.schedule(new LimpiarTimerTask(), 0, //initial delay
+            60000); //subsequent rate
     }
 
+     
     private UsuarioOAuth guardarUsuario(Usuario usuario) {
         byte[] bytesEncoded = Base64.getEncoder().encode((usuario.getEmail() + usuario.getContrasenia()).getBytes());
         String token = new String(bytesEncoded);
@@ -109,4 +122,18 @@ public class UsuarioBean {
                 .setParameter("id", id).getSingleResult();
     }
 
+    class LimpiarTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            List<UsuarioOAuth> usuariosList = new ArrayList<UsuarioOAuth>(usuarios.values());       
+            for (UsuarioOAuth user : usuariosList) {
+                Date fechaActual = new Date();
+                if(fechaActual.compareTo(user.getActivoHasta())>=0){
+                    usuarios.remove(user.getToken());
+                }
+            }
+            
+        }
+    }
 }
