@@ -50,7 +50,7 @@ public class Partido implements Serializable {
     private Date fechaF;
     
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaI;
     
     @NotNull
