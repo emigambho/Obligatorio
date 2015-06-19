@@ -43,7 +43,7 @@ public class UsuarioBean {
         byte[] bytesEncoded = Base64.getEncoder().encode((usuario.getEmail() + usuario.getContrasenia()).getBytes());
         String token = new String(bytesEncoded);
         UsuarioOAuth user = null;
-        if (usuarios.get(token) != null) {
+        if (usuarios.get(token) == null) {
             user = new UsuarioOAuth(usuario, new Date(), token);
             usuarios.put(token, user);
         }
