@@ -5,6 +5,8 @@ import entidad.Equipo;
 import entidad.Jugador;
 import entidad.Partido;
 import exception.PartidoException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +42,7 @@ public class PartidoBean {
     @PersistenceContext
     EntityManager em;
 
-    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado, Administrador administrador) {
+    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado, Administrador administrador){
         Equipo equipoA = equipoBean.buscarEquipo(idEquipoA);
         Equipo equipoB = equipoBean.buscarEquipo(idEquipoB);
         List<Equipo> equipos = new ArrayList<Equipo>(2);

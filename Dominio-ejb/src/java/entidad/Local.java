@@ -54,8 +54,7 @@ public class Local implements Serializable{
     
     }
     
-    public Local(Long id, String direccion, List<Cancha> canchas, Integer telefono, Integer horaApertura, Integer horaCierre) {
-        this.id = id;
+    public Local(String direccion, List<Cancha> canchas, Integer telefono, Integer horaApertura, Integer horaCierre) {
         this.direccion = direccion;
         this.canchas = canchas;
         this.telefono = telefono;
@@ -63,11 +62,7 @@ public class Local implements Serializable{
         this.horaCierre = horaCierre;
     }
  
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDireccion(String direccion) {
+     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
 
@@ -78,11 +73,6 @@ public class Local implements Serializable{
     public void setTelefono(Integer telefono) {
         this.telefono = telefono;
     } 
-    
-    public Long getId() {
-        return id;
-    }
-
     public String getDireccion() {
         return direccion;
     }

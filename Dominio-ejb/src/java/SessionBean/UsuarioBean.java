@@ -3,6 +3,7 @@ package SessionBean;
 import entidad.Administrador;
 import entidad.Equipo;
 import entidad.Jugador;
+import entidad.Local;
 import entidad.Partido;
 import java.util.Date;
 import java.util.List;
@@ -51,15 +52,14 @@ public class UsuarioBean {
         return user;
     }
 
-    public Administrador CrearAdministrador(String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono, Integer puntuacion,
-            String email, String contrasenia, String direccion) {
+    public Administrador CrearAdministrador(List<Local> locales, Integer telefono, String nombre, String email, String contrasenia, String direccion, Date fechaNacimiento){
         Administrador administrador = new Administrador(null, telefono, nombre, email, contrasenia, direccion, fechaNacimiento);
         em.persist(administrador);
         return administrador;
     }
 
     public Jugador CrearJugador(String nombre, Date fechaNacimiento, List<Equipo> equipos, Integer telefono, Integer puntuacion,
-            String email, String contrasenia, String direccion) {
+            String email, String contrasenia, String direccion){
         Jugador jugador = new Jugador(nombre, fechaNacimiento, equipos, telefono, puntuacion, email, contrasenia, direccion);
         em.persist(jugador);
         return jugador;
