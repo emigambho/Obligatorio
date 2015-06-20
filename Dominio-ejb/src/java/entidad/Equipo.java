@@ -22,7 +22,6 @@ public class Equipo implements Serializable {
     private Long id;
     
     @NotNull
-    @NotBlank
     private Integer clasificacion;
     
     @NotNull
@@ -33,8 +32,6 @@ public class Equipo implements Serializable {
     @NotBlank
     private String nombre;
 
-
-    
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name="equipo_partido", 
             joinColumns = @JoinColumn(name="equipo_id", 
@@ -51,8 +48,6 @@ public class Equipo implements Serializable {
                     referencedColumnName = "id"))
     private List<Jugador> jugadores;
     
-   
-
     public Equipo() {
     }
 

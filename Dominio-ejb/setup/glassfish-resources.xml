@@ -12,7 +12,7 @@
         <property name="databaseName" value="ObligatorioArqSoft"/>
         <property name="User" value="root"/>
         <property name="Password" value="root"/>
-        <property name="URL" value="localhost:3306/ObligatorioArqSoft?zeroDateTimeBehavior=convertToNull"/>
+        <property name="URL" value="jdbc:mysql://localhost:3306/ObligatorioArqSoft"/>
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
     </jdbc-connection-pool>
     <jdbc-resource enabled="true" jndi-name="DominioDS" object-type="user" pool-name="mysql_ObligatorioArqSoft_rootPool"/>

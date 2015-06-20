@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
@@ -37,7 +36,6 @@ public class Local implements Serializable{
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "local")
     private List<Cancha> canchas;
     
-    @NotBlank
     @NotNull
     private Integer telefono;
     

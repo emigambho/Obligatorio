@@ -25,7 +25,6 @@ public class Cancha implements Serializable {
     private String tipo;
     
     @NotNull
-    @NotBlank
     private Double tamanio;
     
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cancha") 

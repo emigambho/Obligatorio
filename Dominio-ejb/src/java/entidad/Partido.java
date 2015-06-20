@@ -12,13 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.hibernate.validator.constraints.NotBlank;
 import partido.util.EstadoPartido;
 
 @Entity
@@ -44,17 +42,13 @@ public class Partido implements Serializable {
     @NotNull
     private Integer golesB;
     
-    @NotBlank
     @NotNull
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaF;
     
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaI;
-    
-    @NotNull
-    private Integer minutos;
     
     @NotNull
     private EstadoPartido estado;
@@ -125,14 +119,6 @@ public class Partido implements Serializable {
 
     public void setFechaI(Date fechaI) {
         this.fechaI = fechaI;
-    }
-
-    public Integer getMinutos() {
-        return minutos;
-    }
-
-    public void setMinutos(Integer minutos) {
-        this.minutos = minutos;
     }
     
     public EstadoPartido getEstado(){
