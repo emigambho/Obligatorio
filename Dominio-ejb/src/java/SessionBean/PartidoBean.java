@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -219,15 +221,16 @@ public class PartidoBean {
         equipoB.setClasificacion(clasificacionEquipoB);
     }
 
-    public void registrarJugadorAPartido(Date fecha, Jugador jugador) {
-        //TODO: Realizar bien las configuraciones
+    public void registrarJugadorAPartido(String fecha, Jugador jugador) {
         try {
+            
             QueueConnection connection = connectionFactory.createQueueConnection();
             QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             QueueSender sender = session.createSender(colaDePartidos);
             MapMessage message = session.createMapMessage();
-            message.setObject("fecha", fecha);
-            message.setObject("jugador", jugador);
+            message.setString("fecha", fecha);
+            message.setBoolean("jugador", true);
+            message.setLong("jugadorId", jugador.getId());
             sender.send(message);
             session.close();
             connection.close();
@@ -236,15 +239,16 @@ public class PartidoBean {
         }
     }
 
-    public void registrarEquipoAPartido(Date fecha, Equipo equipo) {
+    public void registrarEquipoAPartido(String fecha, Long equipo) {
         //TODO: Realizar bien las configuraciones
         try {
             QueueConnection connection = connectionFactory.createQueueConnection();
             QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             QueueSender sender = session.createSender(colaDePartidos);
             MapMessage message = session.createMapMessage();
-            message.setObject("fecha", fecha);
-            message.setObject("equipo", equipo);
+            message.setString("fecha", fecha);
+            message.setBoolean("jugador", false);
+            message.setLong("equipoId", equipo);
             sender.send(message);
             session.close();
             connection.close();
@@ -253,12 +257,26 @@ public class PartidoBean {
         }
     }
 
-    public void registrarJugadorPartidoAutomatico(Date fecha, Jugador jugador) {
-        System.out.println("Registrar jugador de nombre " + jugador.getNombre() +" a un partido automatico con fecha" + fecha);
+    public void registrarJugadorPartidoAutomatico(String fecha, Long jugadorId) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+            Date fechaDelPartido = sdf.parse(fecha);
+            System.out.println("Registrar jugador de nombre " + jugadorId +" a un partido automatico con fecha" + fechaDelPartido);
+        } catch (ParseException ex) {
+            Logger.getLogger(PartidoBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }
 
-    public void registrarEquipoPartidoAutomatico(Date fecha, Equipo equipo) {
+    public void registrarEquipoPartidoAutomatico(String fecha, Long equipoId) {
+         try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+            Date fechaDelPartido = sdf.parse(fecha);
+            System.out.println("Registrar jugador de nombre " + equipoId +" a un partido automatico con fecha" + fechaDelPartido);
+        } catch (ParseException ex) {
+            Logger.getLogger(PartidoBean.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
     
     public EstadoPartido verEstadoPartido(Long idPartido){

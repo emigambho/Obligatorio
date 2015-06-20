@@ -88,9 +88,10 @@ public class UsuarioResource {
     @PUT
     @Produces("application/json")
     @Path("IniciarSesionJugador")
-    public Response buscarAdministrador(@QueryParam("email") String email,@QueryParam("contraseña") String contraseña) {
-        usuarioBean.IniciarSesionJugador(email,contraseña);
-        return Response.ok().build();
+    public Response IniciarSesionJugador(@QueryParam("email") String email,@QueryParam("contraseña") String contraseña) {
+        UsuarioOAuth user = null;
+        user = usuarioBean.IniciarSesionJugador(email,contraseña);
+        return Response.ok(user).build();
     }
     
     

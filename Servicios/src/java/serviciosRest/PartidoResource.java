@@ -77,8 +77,8 @@ public class PartidoResource {
      */
     @PUT
     @Path("registrarJugadorAPartido")
-    public Response registrarJugadorAPartido(@QueryParam("fecha") Date fecha, @HeaderParam("token") String token) {
-        if (VACIO.equals(token) || fecha != null) {
+    public Response registrarJugadorAPartido(@QueryParam("fecha") String fecha, @HeaderParam("token") String token) {
+        if (VACIO.equals(token) || fecha == null) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
@@ -109,7 +109,7 @@ public class PartidoResource {
      */
     @PUT
     @Path("registrarEquipoAPartido")
-    public Response registrarEquipoAPartido(@QueryParam("fecha") Date fecha, @QueryParam("id") Long id, @HeaderParam("token") String token) {
+    public Response registrarEquipoAPartido(@QueryParam("fecha") String fecha, @QueryParam("id") Long id, @HeaderParam("token") String token) {
         if (VACIO.equals(token)) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
@@ -117,7 +117,7 @@ public class PartidoResource {
             if (user != null) {
                 if (user.esJugador()) {
                     Jugador jugador = user.getJugador();
-                    partidoBean.registrarEquipoAPartido(fecha, null);
+                    partidoBean.registrarEquipoAPartido(fecha, id);
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();

@@ -13,6 +13,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -40,26 +41,27 @@ public class UsuarioBean {
 
     @PostConstruct
     private void startup() {
-        try {
-            this.usuarios = new HashMap<>();
-            Timer timer = new Timer();
-            timer.schedule(new LimpiarTimerTask(), 0, //initial delay
+        this.usuarios = new HashMap<>();
+        Timer timer = new Timer();
+        timer.schedule(new LimpiarTimerTask(), 0, //initial delay
                     60000); //subsequent rate
-            cargarDatos();
-        } catch (ParseException ex) {
-            Logger.getLogger(UsuarioBean.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            //cargarDatos();
+       
     }
 
     private UsuarioOAuth guardarUsuario(Usuario usuario) {
         byte[] bytesEncoded = Base64.getEncoder().encode((usuario.getEmail() + usuario.getContrasenia()).getBytes());
         String token = new String(bytesEncoded);
-        UsuarioOAuth user = null;
-        if (usuarios.get(token) == null) {
-            user = new UsuarioOAuth(usuario, new Date(), token);
-            usuarios.put(token, user);
+        UsuarioOAuth user = usuarios.get(token);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, 15);
+        Date date =  calendar.getTime();
+        if (user == null) {
+            user = new UsuarioOAuth(usuario, date, token);        
+        } else {
+            user.setActivoHasta(date);
         }
-
+        usuarios.put(token, user);
         return user;
     }
 

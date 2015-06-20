@@ -27,19 +27,20 @@ public class PartidoMDB implements MessageListener {
         try {
             if (message instanceof MapMessage) {
                 MapMessage msg = (MapMessage) message;
-                Date fecha = (Date)msg.getObject("fecha");
-                Jugador jugador = (Jugador)msg.getObject("jugador");
-                Equipo equipo = (Equipo)msg.getObject("equipo");
-                
-                if(equipo != null){
-                    partidoBean.registrarEquipoPartidoAutomatico(fecha, equipo);
+                String fecha = msg.getString("fecha");
+                Boolean esJugador = msg.getBoolean("jugador");
+  
+                if(!esJugador){
+                    Long equipoId = msg.getLong("equipoId");
+                    partidoBean.registrarEquipoPartidoAutomatico(fecha, equipoId);
                 } else {
-                    partidoBean.registrarJugadorPartidoAutomatico(fecha, jugador);
+                    Long jugadorId = msg.getLong("jugadorId");
+                    partidoBean.registrarJugadorPartidoAutomatico(fecha, jugadorId);
                 }
                 
             }
         } catch (Exception ex) {
-            
+            System.err.println(ex);
         }
     }
     
