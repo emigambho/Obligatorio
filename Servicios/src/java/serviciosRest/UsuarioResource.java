@@ -83,48 +83,16 @@ public class UsuarioResource {
     public Response buscarAdministrador(@PathParam("id") Long idPartido) {
         Administrador administradr = usuarioBean.buscarAdminstradorId(idPartido);
         return Response.ok(gson.toJson(administradr)).build();
-    }   
-//    @PUT
-//    @Path("registrarJugadorAPartido")
-//    public Response registrarJugadorAPartido(@QueryParam("fecha") Date fecha, @HeaderParam("token") String token) {
-//        if (VACIO.equals(token) || fecha != null) {
-//            return Response.status(Status.BAD_REQUEST).build();
-//        } else {
-//            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-//            if (user != null) {
-//                if (user.esJugador()) {
-//                    Jugador jugador = user.getJugador();
-//                    partidoBean.registrarJugadorAPartido(fecha, jugador);
-//                    return Response.accepted().build();
-//                } else {
-//                    return Response.status(Status.FORBIDDEN).build();
-//                }
-//            } else {
-//                return Response.status(Status.UNAUTHORIZED).build();
-//            }
-//        }
-//    }
-
+    } 
     
-//    @PUT
-//    @Path("crearPartido")
-//    public Response crearPartido(@QueryParam("idEquipoA") Long idEquipoA, @QueryParam("idEquipoB") Long idEquipoB, @QueryParam("fechaInicio") Date fechaInicio, @QueryParam("fechaFin") Date fechaFin, @HeaderParam("token") String token) {
-//        if (VACIO.equals(token)) {
-//            return Response.status(Status.BAD_REQUEST).build();
-//        } else {
-//            UsuarioOAuth user = usuarioBean.buscarUsuario(token);
-//            if (user != null) {
-//                if (user.esAdministrador()) {
-//                    Administrador administrador = user.getAdministrador();
-//                    partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, fechaFin, EstadoPartido.RESERVADO, administrador);
-//                    return Response.accepted().build();
-//                } else {
-//                    return Response.status(Status.FORBIDDEN).build();
-//                }
-//            } else {
-//                return Response.status(Status.UNAUTHORIZED).build();
-//            }
-//        }
-//    }
-
+    @PUT
+    @Produces("application/json")
+    @Path("IniciarSesionJugador")
+    public Response buscarAdministrador(@QueryParam("email") String email,@QueryParam("contraseña") String contraseña) {
+        usuarioBean.IniciarSesionJugador(email,contraseña);
+        return Response.ok().build();
+    }
+    
+    
+    
 }

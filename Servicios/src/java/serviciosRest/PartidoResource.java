@@ -17,6 +17,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -127,7 +128,7 @@ public class PartidoResource {
         }
     }
 
-    @PUT
+    @POST
     @Path("crearPartido")
     public Response crearPartido(@QueryParam("idEquipoA") Long idEquipoA, @QueryParam("idEquipoB") Long idEquipoB, @QueryParam("fechaInicio") Date fechaInicio, @QueryParam("fechaFin") Date fechaFin, @HeaderParam("token") String token) {
         if (VACIO.equals(token)) {
