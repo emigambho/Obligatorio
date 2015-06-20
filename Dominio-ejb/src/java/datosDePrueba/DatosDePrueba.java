@@ -19,12 +19,13 @@ import partido.util.EstadoPartido;
 public class DatosDePrueba {
 
      @PersistenceContext
-    EntityManagerFactory emf =  Persistence.createEntityManagerFactory("$objectdb/db/points.odb");
-    EntityManager em = emf.createEntityManager();
+    
    
    
 
     private void cargarDatos() throws ParseException {
+        EntityManagerFactory emf =  Persistence.createEntityManagerFactory("$objectdb/db/points.odb");
+        EntityManager em = emf.createEntityManager();
         List<Cancha> canchasLocal1 = new ArrayList<Cancha>();
         List<Cancha> canchasLocal2 = new ArrayList<Cancha>();
         List<Cancha> canchasLocal3 = new ArrayList<Cancha>();
