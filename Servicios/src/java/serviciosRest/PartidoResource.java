@@ -77,7 +77,7 @@ public class PartidoResource {
      */
     @PUT
     @Path("registrarJugadorAPartido")
-    public Response registrarJugadorAPartido(@QueryParam("fecha") String fecha, @HeaderParam("token") String token) {
+    public Response registrarJugadorAPartido(@QueryParam("fecha") String fecha, @QueryParam("local") Long localId, @HeaderParam("token") String token) {
         if (VACIO.equals(token) || fecha == null) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
@@ -85,7 +85,7 @@ public class PartidoResource {
             if (user != null) {
                 if (user.esJugador()) {
                     Jugador jugador = user.getJugador();
-                    partidoBean.registrarJugadorAPartido(fecha, jugador);
+                    partidoBean.registrarJugadorAPartido(fecha, jugador, localId);
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -96,28 +96,16 @@ public class PartidoResource {
         }
     }
 
-    /**
-     * Un Jugador se registra a una cola de espera para armar el armado de un
-     * partido en una determinada hora. Validaciones: -La hora debe estar entre
-     * 0 y 23 -El token no puede ser vacio -El token debe corresponder a un
-     * jugador
-     *
-     * @param fecha
-     * @param id
-     * @param token
-     * @return
-     */
     @PUT
     @Path("registrarEquipoAPartido")
-    public Response registrarEquipoAPartido(@QueryParam("fecha") String fecha, @QueryParam("id") Long id, @HeaderParam("token") String token) {
+    public Response registrarEquipoAPartido(@QueryParam("fecha") String fecha, @QueryParam("equipo") Long equipoId, @QueryParam("local") Long localId, @HeaderParam("token") String token) {
         if (VACIO.equals(token)) {
             return Response.status(Status.BAD_REQUEST).build();
         } else {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
             if (user != null) {
                 if (user.esJugador()) {
-                    Jugador jugador = user.getJugador();
-                    partidoBean.registrarEquipoAPartido(fecha, id);
+                    partidoBean.registrarEquipoAPartido(fecha, equipoId, localId);
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();

@@ -1,15 +1,20 @@
 package SessionBean;
 
 import entidad.Administrador;
+import entidad.Cancha;
 import entidad.Equipo;
 import entidad.Jugador;
+import entidad.Local;
 import entidad.Partido;
 import exception.PartidoException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -22,12 +27,21 @@ import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.Session;
+import javax.mail.Address;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import partido.util.EstadoPartido;
 
 @Stateless
 public class PartidoBean {
+    @Resource(name = "Mail")
+    private javax.mail.Session mail;
 
     @EJB
     public EquipoBean equipoBean;
@@ -40,14 +54,16 @@ public class PartidoBean {
 
     @Resource(lookup = "PartidoQueueFactory")
     private QueueConnectionFactory connectionFactory;
+    
+    private Map<Long,Local> localesMap;
 
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado, Administrador administrador){
         Equipo equipoA = equipoBean.buscarEquipo(idEquipoA);
         Equipo equipoB = equipoBean.buscarEquipo(idEquipoB);
-        List<Equipo> equipos = new ArrayList<Equipo>(2);
+        List<Equipo> equipos = new ArrayList<>(2);
         if (equipoB != null && equipoA != null) {
             if (fechaI.compareTo(fechaF) >= 0) {
                 equipos.add(equipoA);
@@ -127,10 +143,20 @@ public class PartidoBean {
         return (Partido) em.createQuery("select p from Partido p where p.id = :idPartido")
                 .setParameter("idPartido", idPartido).getSingleResult();
     }
+    
+    public Equipo buscarEquipo(Long idEquipo) {
+        return (Equipo) em.createQuery("select e from Equipo e where e.id = :idEquipo")
+                .setParameter("idEquipo", idEquipo).getSingleResult();
+    }
 
+    public Local buscarLocal(Long localId) {
+        return (Local) em.createQuery("select l from Local l where l.id = :localId")
+                .setParameter("localId", localId).getSingleResult();
+    }
+    
     public List<Equipo> ObtenerEquiposPartido(Long idPartido) {
         Partido partido = buscarPartido(idPartido);
-        List<Equipo> equipos = new ArrayList<Equipo>();
+        List<Equipo> equipos = new ArrayList<>();
         equipos.add(partido.getEquipos().get(0));
         equipos.add(partido.getEquipos().get(1));
         return equipos;
@@ -185,7 +211,7 @@ public class PartidoBean {
 
     public void ActualizarCalsificacionesEquiposGanaUnEquipo(Integer puntuacionA, Integer puntuacionB) {
         if (puntuacionA < 9) {
-            puntuacionA = puntuacionA + 2;
+            puntuacionA += 2;
         } else if (puntuacionA == 9) {
             puntuacionA++;
         }
@@ -221,7 +247,7 @@ public class PartidoBean {
         equipoB.setClasificacion(clasificacionEquipoB);
     }
 
-    public void registrarJugadorAPartido(String fecha, Jugador jugador) {
+    public void registrarJugadorAPartido(String fecha, Jugador jugador, Long localId) {
         try {
             
             QueueConnection connection = connectionFactory.createQueueConnection();
@@ -231,6 +257,7 @@ public class PartidoBean {
             message.setString("fecha", fecha);
             message.setBoolean("jugador", true);
             message.setLong("jugadorId", jugador.getId());
+            message.setLong("localId", localId);
             sender.send(message);
             session.close();
             connection.close();
@@ -239,7 +266,7 @@ public class PartidoBean {
         }
     }
 
-    public void registrarEquipoAPartido(String fecha, Long equipo) {
+    public void registrarEquipoAPartido(String fecha, Long equipoId, Long localId) {
         //TODO: Realizar bien las configuraciones
         try {
             QueueConnection connection = connectionFactory.createQueueConnection();
@@ -248,7 +275,8 @@ public class PartidoBean {
             MapMessage message = session.createMapMessage();
             message.setString("fecha", fecha);
             message.setBoolean("jugador", false);
-            message.setLong("equipoId", equipo);
+            message.setLong("equipoId", equipoId);
+            message.setLong("localId", localId);
             sender.send(message);
             session.close();
             connection.close();
@@ -257,26 +285,77 @@ public class PartidoBean {
         }
     }
 
-    public void registrarJugadorPartidoAutomatico(String fecha, Long jugadorId) {
+    public void registrarJugadorPartidoAutomatico(String fecha, Long jugadorId, Long localId) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
             Date fechaDelPartido = sdf.parse(fecha);
-            System.out.println("Registrar jugador de nombre " + jugadorId +" a un partido automatico con fecha" + fechaDelPartido);
+            Jugador jugador = usuarioBean.buscarJugador(jugadorId);
+            if(jugador == null){
+                // Devolver error, Jugador no encontrado
+            }
+            System.out.println("Registrar jugador de nombre " + jugador.getNombre() +" a un partido automatico con fecha" + fechaDelPartido);
+            Local local = localesMap.get(localId);
+            if(local == null){
+                local = buscarLocal(localId);
+            }
+            if(local==null){
+                //Devolver error, local no encontrado
+            }
+            
+            for(Cancha cancha : local.getCanchas()){
+                cancha.getPartidos();
+            }
+            
         } catch (ParseException ex) {
             Logger.getLogger(PartidoBean.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }
 
-    public void registrarEquipoPartidoAutomatico(String fecha, Long equipoId) {
-         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
-            Date fechaDelPartido = sdf.parse(fecha);
-            System.out.println("Registrar jugador de nombre " + equipoId +" a un partido automatico con fecha" + fechaDelPartido);
-        } catch (ParseException ex) {
-            Logger.getLogger(PartidoBean.class.getName()).log(Level.SEVERE, null, ex);
+    public void registrarEquipoPartidoAutomatico(String fecha, Long equipoId, Long localId) throws PartidoException, ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+        Date fechaDelPartido = sdf.parse(fecha);
+        Equipo equipo = buscarEquipo(equipoId);
+        if(equipo == null){
+            throw new PartidoException();// Devolver error, Equipo no existe
         }
-        
+        System.out.println("Registrar jugador de nombre " + equipo.getNombre() +" a un partido automatico con fecha" + fechaDelPartido);
+
+        Local local = localesMap.get(localId);
+        if(local == null){
+            local = buscarLocal(localId);
+        }  
+        if(local==null){
+            throw new PartidoException();//Devolver error, local no encontrado
+        }
+        localesMap.put(localId, local);
+        Boolean partidoEncontrado = false;
+        for(Cancha cancha : local.getCanchas()){
+            Boolean partidoCompleto = false;
+            for(Partido partido :cancha.getPartidos()){
+                if(partido.getFechaI().compareTo(fechaDelPartido)==0){
+                    if(partido.getEquipos().size()<=1){
+                        partido.getEquipos().add(equipo);
+                        partidoEncontrado=true;      
+                    } else {
+                        partidoCompleto = true;
+                    }
+                    break;
+                } 
+            }
+            
+            if(partidoEncontrado){
+                break;
+            } else{
+                if(!partidoCompleto){
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(fechaDelPartido);
+                    calendar.add(Calendar.HOUR, 1);
+                    crearPartido(equipoId, null, calendar.getTime(), fechaDelPartido,
+                        EstadoPartido.RESERVADO, local.getAdministradores().get(0));
+                }  
+            }
+        }  
     }
     
     public EstadoPartido verEstadoPartido(Long idPartido){
@@ -294,5 +373,25 @@ public class PartidoBean {
         }
         return null;
     }
+
+    public Map<Long, Local> getLocalesMap() {
+        if(localesMap == null)
+            localesMap = new HashMap<>();
+        return localesMap;
+    }
+
+    public void setLocalesMap(Map<Long, Local> localesMap) {
+        this.localesMap = localesMap;
+    }
+
+    private void sendMail(String email, String subject, String body) throws NamingException, MessagingException {
+        MimeMessage message = new MimeMessage(mail);
+        message.setSubject(subject);
+        message.setFrom("noreplay@obligatorio.com");
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+        message.setText(body);
+        Transport.send(message);
+    }
             
+    
 }
