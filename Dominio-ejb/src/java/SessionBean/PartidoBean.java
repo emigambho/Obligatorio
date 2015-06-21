@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
@@ -63,7 +64,7 @@ public class PartidoBean {
     @PersistenceContext
     private EntityManager em;
 
-    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado, Administrador administrador){
+    public Partido crearPartido(Long idEquipoA, Long idEquipoB, Date fechaF, Date fechaI, EstadoPartido estado, Administrador administrador) throws PartidoException{
         Equipo equipoA = equipoBean.buscarEquipo(idEquipoA);
         Equipo equipoB = equipoBean.buscarEquipo(idEquipoB);
         List<Equipo> equipos = new ArrayList<>(2);
@@ -77,18 +78,26 @@ public class PartidoBean {
                     em.persist(partido);
                     return partido;
                 }
+            } else {
+                throw new PartidoException("Partido.error.1.2","Fecha Inicio es mayor a fecha fin");
             }
+        } else {
+            throw new PartidoException("Partido.error.1.3","Alguno de los equipos no existe");
         }
         return null;
     }
 
-    public void cancelarPartido(Long idPartido, Administrador administrador) {
+    public void cancelarPartido(Long idPartido, Administrador administrador) throws PartidoException {
         Partido partido = buscarPartido(idPartido);
         if (partido != null && EstadoPartido.RESERVADO.equals(partido.getEstado())) {
             if (usuarioBean.esAdministradorDelLocal(administrador, partido)) {
                 partido.setEsadoParido(EstadoPartido.CANCELADO);
                 em.persist(partido);
+            } else {
+                throw new PartidoException("Partido.error.1.4","El administrador no pertenece al local");
             }
+        } else {
+            throw new PartidoException("Partido.error.1.5","El partido no puede ser cancelado.");
         }
     }
 
@@ -257,9 +266,7 @@ public class PartidoBean {
         equipoB.setClasificacion(clasificacionEquipoB);
     }
 
-    public void registrarJugadorAPartido(String fecha, Jugador jugador, Long localId) {
-        try {
-            
+    public void registrarJugadorAPartido(String fecha, Jugador jugador, Long localId) throws JMSException {
             QueueConnection connection = connectionFactory.createQueueConnection();
             QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
             QueueSender sender = session.createSender(colaDePartidos);
@@ -271,14 +278,11 @@ public class PartidoBean {
             sender.send(message);
             session.close();
             connection.close();
-        } catch (Exception ex) {
 
-        }
     }
 
-    public void registrarEquipoAPartido(String fecha, Long equipoId, Long localId, Jugador jugador) throws EquipoException {
+    public void registrarEquipoAPartido(String fecha, Long equipoId, Long localId, Jugador jugador) throws EquipoException, JMSException {
         if(!esDelEquipo(equipoId,jugador)){
-            try {
                 QueueConnection connection = connectionFactory.createQueueConnection();
                 QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
                 QueueSender sender = session.createSender(colaDePartidos);
@@ -290,9 +294,6 @@ public class PartidoBean {
                 sender.send(message);
                 session.close();
                 connection.close();
-            } catch (Exception ex) {
-
-            }
         } else {
             throw new EquipoException();
         }

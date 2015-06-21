@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
+import javax.jms.JMSException;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
@@ -77,7 +78,11 @@ public class PartidoResource {
             if (user != null) {
                 if (user.esJugador()) {
                     Jugador jugador = user.getJugador();
-                    partidoBean.registrarJugadorAPartido(fecha, jugador, localId);
+                    try {
+                        partidoBean.registrarJugadorAPartido(fecha, jugador, localId);
+                    } catch (JMSException ex) {
+                        Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                    }
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -101,6 +106,8 @@ public class PartidoResource {
                         partidoBean.registrarEquipoAPartido(fecha, equipoId, localId, user.getJugador());
                     } catch (EquipoException ex) {
                         Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
+                    } catch (JMSException ex) {
+                        Response.status(Status.INTERNAL_SERVER_ERROR).build();
                     }
                     return Response.accepted().build();
                 } else {
@@ -122,7 +129,12 @@ public class PartidoResource {
             if (user != null) {
                 if (user.esAdministrador()) {
                     Administrador administrador = user.getAdministrador();
-                    partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, fechaFin, EstadoPartido.RESERVADO, administrador);
+                    try {
+                        partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, fechaFin, EstadoPartido.RESERVADO, administrador);
+                    } catch (PartidoException ex) {
+                        Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
+                        Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
+                    }
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -148,7 +160,7 @@ public class PartidoResource {
                         return Response.accepted().build();
                     } catch (PartidoException ex) {
                         Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
-                        return Response.serverError().entity(ex).build();
+                        return Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
                     }
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -169,7 +181,12 @@ public class PartidoResource {
             if (user != null) {
                 if (user.esAdministrador()) {
                     Administrador administrador = user.getAdministrador();
-                    partidoBean.cancelarPartido(id, administrador);
+                    try {
+                        partidoBean.cancelarPartido(id, administrador);
+                    } catch (PartidoException ex) {
+                        Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
+                        return Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
+                    }
                     return Response.accepted().build();
 
                 } else {
@@ -196,7 +213,7 @@ public class PartidoResource {
                         return Response.accepted().build();
                     } catch (PartidoException ex) {
                         Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
-                        return Response.serverError().entity(ex).build();
+                        return Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
                     }
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
