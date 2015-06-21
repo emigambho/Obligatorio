@@ -41,15 +41,22 @@ public class Cancha implements Serializable {
     
     }
 
+    
     public Cancha(String tipo, Double tamanio, List<Partido> partidos,Boolean habilitado) {
         this.tipo = tipo;
         this.tamanio = tamanio;
         this.partidos = partidos;
         this.habilitado = habilitado;
     }
-    
-    
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
     public void setTamanio(Double tamanio) {
         this.tamanio = tamanio;
     }

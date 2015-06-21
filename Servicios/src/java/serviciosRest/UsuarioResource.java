@@ -33,26 +33,12 @@ public class UsuarioResource {
     private static final String VACIO = "";
 
     private Gson gson;
-   
-    //iniciarSesionJugador
-    //iniciarSesionAdministrador
-    //listrUsu
-
- 
-    
     
     @EJB
     UsuarioBean usuarioBean;
 
     public UsuarioResource() {
         gson = new Gson();
-    }
-    
-    @GET
-    @Produces("application/json")
-    public Response listarUsuario() {
-        List<Usuario> list = usuarioBean.ListarUsuario();
-        return Response.ok(gson.toJson(list)).build();
     }
     
     @GET
@@ -70,6 +56,7 @@ public class UsuarioResource {
         List<Administrador> list = usuarioBean.ListarAdministradores();
         return Response.ok(gson.toJson(list)).build();
     }
+    
     @GET
     @Produces("application/json")
     @Path("jugador/{id}")
@@ -94,6 +81,13 @@ public class UsuarioResource {
         return Response.ok(user).build();
     }
     
-    
+    @PUT
+    @Produces("application/json")
+    @Path("IniciarSesionAdministrador")
+    public Response IniciarSesionAdministrador(@QueryParam("email") String email,@QueryParam("contraseña") String contraseña) {
+        UsuarioOAuth user = null;
+        user = usuarioBean.IniciarSesionAdministrador(email,contraseña);
+        return Response.ok(user).build();
+    }
     
 }

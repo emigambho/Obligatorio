@@ -127,11 +127,6 @@ public class UsuarioBean {
         return (Administrador) em.createQuery("select a from Administrador e where a.id = :id")
                 .setParameter("id", idAdministrador).getSingleResult();
     }
-    
-     public Jugador buscarJugadorId(Long idJugador) {
-        return (Jugador) em.createQuery("select j from Jugador j where j.id = :id")
-                .setParameter("id", idJugador).getSingleResult();
-    }
 
     public boolean esAdministradorDelLocal(Administrador administrador, Partido partido) {
         for (Administrador adm : partido.getCancha().getLocal().getAdministradores()) {
@@ -142,13 +137,13 @@ public class UsuarioBean {
         return false;
     }
 
-    public Map<String, UsuarioOAuth> getUsuarios() {
-        return usuarios;
-    }
-
     public Jugador buscarJugador(Long id) {
         return (Jugador) em.createQuery("select j from Jugador j where j.id = :id")
                 .setParameter("id", id).getSingleResult();
+    }
+    
+    public Map<String, UsuarioOAuth> getUsuarios() {
+        return usuarios;
     }
 
     class LimpiarTimerTask extends TimerTask {
@@ -162,7 +157,6 @@ public class UsuarioBean {
                     usuarios.remove(user.getToken());
                 }
             }
-
         }
     }
 }

@@ -19,6 +19,7 @@ import org.hibernate.validator.constraints.NotBlank;
 @Entity
 public class Local implements Serializable{
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -58,6 +59,14 @@ public class Local implements Serializable{
         this.telefono = telefono;
         this.horaApertura = horaApertura;
         this.horaCierre = horaCierre;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
  
      public void setDireccion(String direccion) {

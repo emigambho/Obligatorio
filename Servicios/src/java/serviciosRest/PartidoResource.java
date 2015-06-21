@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import entidad.Administrador;
 import entidad.Jugador;
 import entidad.Partido;
+import exception.EquipoException;
 import exception.PartidoException;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ public class PartidoResource {
 
     private static final String VACIO = "";
 
-    private Gson gson;
+    private final Gson gson;
 
     @EJB
     PartidoBean partidoBean;
@@ -66,15 +67,6 @@ public class PartidoResource {
         return Response.ok(gson.toJson(partido)).build();
     }
 
-    /**
-     * Un Jugador se registra a una cola de espera para armar el armado de un
-     * partido en una determinada hora. Validaciones: -El token no puede ser
-     * vacio -El token debe corresponder a un jugador
-     *
-     * @param fecha
-     * @param token
-     * @return
-     */
     @PUT
     @Path("registrarJugadorAPartido")
     public Response registrarJugadorAPartido(@QueryParam("fecha") String fecha, @QueryParam("local") Long localId, @HeaderParam("token") String token) {
@@ -105,7 +97,11 @@ public class PartidoResource {
             UsuarioOAuth user = usuarioBean.buscarUsuario(token);
             if (user != null) {
                 if (user.esJugador()) {
-                    partidoBean.registrarEquipoAPartido(fecha, equipoId, localId);
+                    try {
+                        partidoBean.registrarEquipoAPartido(fecha, equipoId, localId, user.getJugador());
+                    } catch (EquipoException ex) {
+                        Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
+                    }
                     return Response.accepted().build();
                 } else {
                     return Response.status(Status.FORBIDDEN).build();
@@ -137,13 +133,7 @@ public class PartidoResource {
         }
     }
 
-//
-//    @PUT
-//    public Response putJson(@QueryParam("id") Long idSolicitud, @QueryParam("servicio") String servicio, @QueryParam("estado") String estado) {
-//        servicioBean.registrarCambioEstado(idSolicitud, servicio, estado);
-//        return Response.accepted().build();
-//    }
-    @PUT //ACTUALIZAR ALGO EXISTENTE
+    @PUT 
     @Path("confirmarAPartido")
     public Response confirmarAPartido(@QueryParam("id") Long id, @QueryParam("fechaInicio") Date fechaInicio, @HeaderParam("token") String token) {
         if (VACIO.equals(token)) {
