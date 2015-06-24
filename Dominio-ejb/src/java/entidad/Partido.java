@@ -1,5 +1,7 @@
 package entidad;
 
+import partido.util.EstadoPartido;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -17,49 +19,46 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import partido.util.EstadoPartido;
 
 @Entity
 @XmlRootElement
 public class Partido implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
-    @ManyToMany(cascade = CascadeType.ALL) 
-    @JoinTable(name="equipo_partido", 
-            joinColumns = @JoinColumn(name="partido_id", 
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "equipo_partido",
+            joinColumns = @JoinColumn(name = "partido_id",
                     referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="equipo_id", 
+            inverseJoinColumns = @JoinColumn(name = "equipo_id",
                     referencedColumnName = "id"))
     private List<Equipo> equipos;
-    
+
     @NotNull
     private Integer golesA;
 
     @NotNull
     private Integer golesB;
-    
+
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaF;
-    
+
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaI;
-    
+
     @NotNull
     private EstadoPartido estado;
-    
 
     @ManyToOne
-    @JoinColumn(name="CANCHA_ID")
+    @JoinColumn(name = "CANCHA_ID")
     private Cancha cancha;
-      
-    
-    
+
     public Partido() {
     }
 
@@ -120,12 +119,12 @@ public class Partido implements Serializable {
     public void setFechaI(Date fechaI) {
         this.fechaI = fechaI;
     }
-    
-    public EstadoPartido getEstado(){
+
+    public EstadoPartido getEstado() {
         return estado;
     }
-    
-    public void setEsadoParido(EstadoPartido estado){
+
+    public void setEsadoParido(EstadoPartido estado) {
         this.estado = estado;
     }
 
@@ -136,7 +135,7 @@ public class Partido implements Serializable {
     public void setCancha(Cancha cancha) {
         this.cancha = cancha;
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -153,19 +152,13 @@ public class Partido implements Serializable {
             return false;
         }
         final Partido other = (Partido) obj;
-        if (!this.id.equals(other.id)) {
-            return false;
-        } 
-        return true;
+        return this.id.equals(other.id);
     }
 
     @Override
     public String toString() {
-        return "Partido{" + "equipoA=" + equipos.get(0) + ", equipoB=" + equipos.get(0) + ", golesA=" + golesA + ", golesB=" + golesB + '}';
+        return "Partido{" + "equipoA=" + equipos.get(0) + ", equipoB=" + equipos.get(0) 
+                + ", golesA=" + golesA + ", golesB=" + golesB + '}';
     }
-    
-    
-    
-  
-    
+
 }

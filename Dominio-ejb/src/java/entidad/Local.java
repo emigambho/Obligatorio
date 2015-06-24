@@ -1,5 +1,6 @@
-
 package entidad;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,46 +14,44 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
-
 
 @Entity
-public class Local implements Serializable{
+public class Local implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    
+
     @NotNull
     private Integer horaApertura;
-    
+
     @NotNull
     private Integer horaCierre;
-    
+
     @NotBlank
     @NotNull
     private String direccion;
-    
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "local")
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "local")
     private List<Cancha> canchas;
-    
+
     @NotNull
     private Integer telefono;
-    
+
     @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="local_administrador", 
-            joinColumns = @JoinColumn(name="local_id", 
+    @JoinTable(name = "local_administrador",
+            joinColumns = @JoinColumn(name = "local_id",
                     referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="administrador_id", 
+            inverseJoinColumns = @JoinColumn(name = "administrador_id",
                     referencedColumnName = "id"))
     private List<Administrador> administradores;
 
-    public Local()
-    {
-    
+    public Local() {
+
     }
-    
+
     public Local(String direccion, List<Cancha> canchas, Integer telefono, Integer horaApertura, Integer horaCierre) {
         this.direccion = direccion;
         this.canchas = canchas;
@@ -68,8 +67,8 @@ public class Local implements Serializable{
     public void setId(Long id) {
         this.id = id;
     }
- 
-     public void setDireccion(String direccion) {
+
+    public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
 
@@ -79,7 +78,8 @@ public class Local implements Serializable{
 
     public void setTelefono(Integer telefono) {
         this.telefono = telefono;
-    } 
+    }
+
     public String getDireccion() {
         return direccion;
     }
@@ -132,19 +132,12 @@ public class Local implements Serializable{
             return false;
         }
         final Local other = (Local) obj;
-        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !(this.id.compareTo(other.id) != 0  && (this.id == null || !this.id.equals(other.id)));
     }
 
-    
-    
     @Override
     public String toString() {
         return "Local{" + "id=" + id + ", direccion=" + direccion + ", telefono=" + telefono + '}';
     }
-    
-    
-    
+
 }

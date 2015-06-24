@@ -1,7 +1,6 @@
-
 package exception;
 
-public class EquipoException extends ObligatorioException{
+public class EquipoException extends ObligatorioException {
 
     public EquipoException() {
     }
@@ -9,5 +8,5 @@ public class EquipoException extends ObligatorioException{
     public EquipoException(String codigo, String descripcion) {
         super(codigo, descripcion);
     }
-    
+
 }
