@@ -109,9 +109,9 @@ public class PartidoResource {
                     try {
                         partidoBean.registrarEquipoAPartido(fecha, equipoId, localId, user.getJugador());
                     } catch (EquipoException ex) {
-                        Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
+                        return Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
                     } catch (JMSException ex) {
-                        Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
                     }
                     return Response.accepted().build();
                 } else {
@@ -134,10 +134,11 @@ public class PartidoResource {
                 if (user.esAdministrador()) {
                     Administrador administrador = user.getAdministrador();
                     try {
-                        partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, fechaFin, EstadoPartido.RESERVADO, administrador);
+                        partidoBean.crearPartido(idEquipoA, idEquipoB, fechaInicio, 
+                                fechaFin, EstadoPartido.RESERVADO, administrador);
                     } catch (PartidoException ex) {
                         Logger.getLogger(PartidoResource.class.getName()).log(Level.SEVERE, null, ex);
-                        Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
+                        return Response.status(Status.PRECONDITION_FAILED).entity(ex.getDescripcion()).build();
                     }
                     return Response.accepted().build();
                 } else {
