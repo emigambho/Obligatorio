@@ -104,12 +104,12 @@ public class PartidoBean {
         }
     }
 
-    public void terminarPartido(Long idPartido, Date fechaFin, Integer golesEquipoA,
+    public void terminarPartido(Long idPartido, Integer golesEquipoA,
             Integer golesEquipoB, Administrador administrador) throws PartidoException {
         Partido partido = buscarPartido(idPartido);
         Date fechaActual = new Date();
         if (partido != null) {
-            if (fechaActual.compareTo(fechaFin) >= 0) {
+            if (fechaActual.compareTo(partido.getFechaF()) >= 0) {
                 if (usuarioBean.esAdministradorDelLocal(administrador, partido)) {
                     partido.setEsadoParido(EstadoPartido.TERMINADO);
                     partido.setGolesA(golesEquipoA);
@@ -122,12 +122,11 @@ public class PartidoBean {
         }
     }
 
-    public void confirmarPartido(Long idPartido, Date fechaInicio, 
-            Administrador administrador) throws PartidoException {
+    public void confirmarPartido(Long idPartido, Administrador administrador) throws PartidoException {
         Partido partido = buscarPartido(idPartido);
         Date fechaActual = new Date();
         if (partido != null) {
-            if (fechaActual.compareTo(fechaInicio) < 0) {
+            if (fechaActual.compareTo(partido.getFechaI()) < 0) {
                 if (partido.getEquipos().size() == 2) {
                     if (partido.getEquipos().get(0).getJugadores().size() == 5) {
                         if (partido.getEquipos().get(1).getJugadores().size() == 5) {
@@ -296,7 +295,7 @@ public class PartidoBean {
             Date fechaDelPartido = sdf.parse(fecha);
             Jugador jugador = usuarioBean.buscarJugador(jugadorId);
             if (jugador == null) {
-                // Devolver error, Jugador no encontrado
+                throw new PartidoException();
             }
             System.out.println("Registrar jugador de nombre " + jugador.getNombre() + " a un partido automatico con fecha" + fechaDelPartido);
             Local local = localBean.buscarLocalMap(localId);
