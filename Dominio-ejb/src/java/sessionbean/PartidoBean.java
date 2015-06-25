@@ -380,7 +380,7 @@ public class PartidoBean {
     private void sendMail(String email, String subject, String body) throws NamingException, MessagingException {
         MimeMessage message = new MimeMessage(mail);
         message.setSubject(subject);
-        message.setFrom("noreplay@obligatorio.com");
+        message.setFrom("noreplay@gololimpico.com");
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
         message.setText(body);
         Transport.send(message);

@@ -85,7 +85,7 @@ public class PartidoResource {
                     try {
                         partidoBean.registrarJugadorAPartido(fecha, jugador, localId);
                     } catch (JMSException ex) {
-                        Response.status(Status.INTERNAL_SERVER_ERROR).build();
+                        return Response.status(Status.INTERNAL_SERVER_ERROR).build();
                     }
                     return Response.accepted().build();
                 } else {
